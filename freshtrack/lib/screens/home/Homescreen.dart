@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          //* Button
+          //* Slider Button
           FractionallySizedBox(
             alignment: Alignment.bottomCenter,
             heightFactor: 0.162,
@@ -94,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     action: () async {
-                      Get.to(LoginScreen(),transition: Transition.downToUp);
+                      Get.to( ()=> LoginScreen(),transition: Transition.downToUp);
                       return false;
                     })
               ],

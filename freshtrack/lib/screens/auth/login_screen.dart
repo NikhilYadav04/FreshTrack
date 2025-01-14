@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/screens/auth/signup_screen.dart';
+import 'package:freshtrack/screens/auth/success_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -22,7 +23,7 @@ class LoginScreen extends StatelessWidget {
         toolbarHeight: 6.8469*SizeConfig.heightMultiplier,
         automaticallyImplyLeading: false,
         leading: GestureDetector(
-          onTap: (){Navigator.of(context).pop();},
+          onTap: (){Get.back();},
           child: Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
@@ -69,20 +70,29 @@ class LoginScreen extends StatelessWidget {
                 child: Text("Forgot Password?",style: style.copyWith(color: Colors.grey.shade800,fontSize: 2.63343*SizeConfig.heightMultiplier,fontFamily: "Glacial_Regular",fontWeight: FontWeight.bold),),
               ),
               SizedBox(height:3.6868*SizeConfig.heightMultiplier),
-              authButton("Login",(){Get.to(SignupScreen(),transition: Transition.rightToLeft);}),
+              authButton("Login",(){
+                if(authController.keyName.currentState!.validate() && authController.keyPassword.currentState!.validate()){
+                   Get.to(()=>  SuccessScreen(),transition: Transition.rightToLeft);
+                }else{
+                  
+                }
+               ;}),
               SizedBox(height: 3.16012*SizeConfig.heightMultiplier,),
-              RichText(
-                text: TextSpan(
-                  text: "Don't have an account?",
-                  style: style.copyWith(color: Colors.grey.shade800,fontSize:2.475430*SizeConfig.heightMultiplier,fontFamily: "Glacial_Regular",fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: " Sign up",
-                      style: style.copyWith(color: Colours.Green,fontSize: 2.475430*SizeConfig.heightMultiplier,fontFamily: "Glacial_Regular",fontWeight: FontWeight.bold)
-                    )
-                  ]
-                ),
-                )
+              GestureDetector(
+                onTap: (){  Get.to(()=> SignupScreen(),transition: Transition.rightToLeft);},
+                child: RichText(
+                  text: TextSpan(
+                    text: "Don't have an account?",
+                    style: style.copyWith(color: Colors.grey.shade800,fontSize:2.475430*SizeConfig.heightMultiplier,fontFamily: "Glacial_Regular",fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(
+                        text: " Sign up",
+                        style: style.copyWith(color: Colours.Green,fontSize: 2.475430*SizeConfig.heightMultiplier,fontFamily: "Glacial_Regular",fontWeight: FontWeight.bold)
+                      )
+                    ]
+                  ),
+                  ),
+              )
             ],
           ),
         ),

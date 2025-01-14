@@ -39,7 +39,10 @@ dependencies:
   get: ^4.6.6
   page_transition: ^2.1.0
   slider_button: ^2.1.0
+  curved_navigation_bar: ^1.0.6
+  font_awesome_flutter: ^10.8.0
   group_button: ^5.3.4
+
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +70,7 @@ flutter:
   assets:
     - assets/
     - assets/onboard/
+    - assets/main/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -107,6 +111,9 @@ flutter:
     - family: Glacial_Bold
       fonts:
         - asset: fonts/GlacialIndifference-Bold.otf
+    - family: Poppins
+      fonts:
+        - asset: fonts/Poppins-Medium.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

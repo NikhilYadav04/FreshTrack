@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
+import 'package:freshtrack/screens/auth/success_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -21,7 +22,7 @@ class SignupScreen extends StatelessWidget {
         toolbarHeight: 65,
         automaticallyImplyLeading: false,
         leading: GestureDetector(
-           onTap: (){Navigator.of(context).pop();},
+           onTap: (){Get.back();},
           child: Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
@@ -90,27 +91,36 @@ class SignupScreen extends StatelessWidget {
                   authController.isVisibleCreate,
                   authController),
               SizedBox(height: 7 * SizeConfig.heightMultiplier),
-              authButton("Create", () {}),
+              authButton("Create", () {
+                if(authController.keyNameCreate.currentState!.validate() && authController.phoneCreate.currentState!.validate() && authController.keyPasswordCreate.currentState!.validate()){
+                  Get.to( ()=> SuccessScreen(),transition: Transition.leftToRight);
+                }else{
+
+                }
+              }),
               SizedBox(
                 height: 3.16012 * SizeConfig.heightMultiplier,
               ),
-              RichText(
-                text: TextSpan(
-                    text: "Already have an account?",
-                    style: style.copyWith(
-                        color: Colors.grey.shade800,
-                        fontSize: 2.475430 * SizeConfig.heightMultiplier,
-                        fontFamily: "Glacial_Regular",
-                        fontWeight: FontWeight.bold),
-                    children: [
-                      TextSpan(
-                          text: " Log in",
-                          style: style.copyWith(
-                              color: Colours.Green,
-                              fontSize: 2.475430 * SizeConfig.heightMultiplier,
-                              fontFamily: "Glacial_Regular",
-                              fontWeight: FontWeight.bold))
-                    ]),
+              GestureDetector(
+                onTap: (){Get.back();},
+                child: RichText(
+                  text: TextSpan(
+                      text: "Already have an account?",
+                      style: style.copyWith(
+                          color: Colors.grey.shade800,
+                          fontSize: 2.475430 * SizeConfig.heightMultiplier,
+                          fontFamily: "Glacial_Regular",
+                          fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                            text: " Log in",
+                            style: style.copyWith(
+                                color: Colours.Green,
+                                fontSize: 2.475430 * SizeConfig.heightMultiplier,
+                                fontFamily: "Glacial_Regular",
+                                fontWeight: FontWeight.bold))
+                      ]),
+                ),
               )
             ],
           ),
