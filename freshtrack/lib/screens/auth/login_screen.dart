@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
                     fontWeight: FontWeight.w600),
               ),
               SizedBox(height:4.213497*SizeConfig.heightMultiplier,),
-              field(context, authController.keyName, authController.nameController, "Enter Your Name",TextInputType.name),
+              field(context, authController.keyName, authController.nameController, "Enter Your Email",TextInputType.name),
               SizedBox(height: 2.63343*SizeConfig.heightMultiplier,),
               Passwordfield(context, authController.keyPassword, authController.passwordController, "Enter your Password",authController.isVisibleLogin,authController),
               SizedBox(height:2.94944*SizeConfig.heightMultiplier,),

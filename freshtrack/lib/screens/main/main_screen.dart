@@ -4,6 +4,7 @@ import 'package:freshtrack/GetX_Controllers/main_screen_controller.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/main/add_item_screen.dart';
 import 'package:freshtrack/screens/main/items_list_screen.dart';
+import 'package:freshtrack/screens/notifications/notification_screen.dart';
 import 'package:freshtrack/screens/recipes/saved_recipes.dart';
 import 'package:freshtrack/screens/recipes/search_recipes.dart';
 import 'package:freshtrack/styling/colors.dart';
@@ -34,9 +35,12 @@ class MainScreen extends StatelessWidget {
             toolbarHeight: 8.95368*SizeConfig.heightMultiplier,
             actions: [
               IconButton(onPressed: (){
-                Get.to(()=>AddItemScreen(),transition: Transition.downToUp);
+                Get.to(()=>AddItemScreen(),transition: Transition.upToDown);
               }, icon: Icon(Icons.add_circle_outline_sharp,color: Colors.white,size: 5.47754*SizeConfig.heightMultiplier,),),
-              Image.asset(Images.Bell,height: 4.42417*SizeConfig.heightMultiplier,width: 9.375*SizeConfig.widthMultiplier,),
+              InkWell
+              (
+                onTap: ()=>Get.to(()=>NotificationScreen(),transition: Transition.upToDown),
+                child: Image.asset(Images.Bell,height: 4.42417*SizeConfig.heightMultiplier,width: 9.375*SizeConfig.widthMultiplier,)),
               SizedBox(width: 1.11607*SizeConfig.widthMultiplier,)
             ],
             title: Text("Hello Nikhil,",style: style.copyWith(fontSize: 3.68681*SizeConfig.heightMultiplier,fontFamily: "Poppins",color: Colors.white,fontWeight: FontWeight.w600),),

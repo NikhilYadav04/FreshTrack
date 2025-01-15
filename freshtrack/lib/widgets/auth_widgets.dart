@@ -48,8 +48,8 @@ Widget field(BuildContext context, GlobalKey<FormState> key,
           if (value == null || value.toString().isEmpty) {
             return 'This field cannot be empty';
           } else if (type == TextInputType.name) {
-            if (!GetUtils.isAlphabetOnly(value.toString())) {
-              return 'Name should be in alphabet only';
+            if (!GetUtils.isEmail(value.toString())) {
+              return 'Enter a valid email!';
             }
           } else if (type == TextInputType.phone) {
             if (!GetUtils.isLengthEqualTo(value.toString(), 10)) {

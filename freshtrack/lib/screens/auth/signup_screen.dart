@@ -69,7 +69,7 @@ class SignupScreen extends StatelessWidget {
                   context,
                   authController.keyNameCreate,
                   authController.nameControllerCreate,
-                  "Enter Your Name",
+                  "Enter Your Email",
                   TextInputType.name),
               SizedBox(
                 height: 2.63343 * SizeConfig.heightMultiplier,
@@ -93,7 +93,7 @@ class SignupScreen extends StatelessWidget {
               SizedBox(height: 7 * SizeConfig.heightMultiplier),
               authButton("Create", () {
                 if(authController.keyNameCreate.currentState!.validate() && authController.phoneCreate.currentState!.validate() && authController.keyPasswordCreate.currentState!.validate()){
-                  Get.to( ()=> SuccessScreen(),transition: Transition.leftToRight);
+                  Get.to( ()=> SuccessScreen(),transition: Transition.rightToLeft);
                 }else{
 
                 }
