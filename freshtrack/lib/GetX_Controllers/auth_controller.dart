@@ -39,6 +39,7 @@ class AuthController extends GetxController {
   void createAccount(BuildContext context) async {
     try {
        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: nameControllerCreate.text.toString(), password: passwordControllerCreate.text.toString());
+        toastMessage(context, "Done!", "Success", ToastificationType.success);
     } catch (e) {
       toastMessage(context, "Authentication Error", e.toString(), ToastificationType.error);
     }
