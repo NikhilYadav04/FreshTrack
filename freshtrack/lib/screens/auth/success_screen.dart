@@ -21,12 +21,12 @@ class SuccessScreen extends StatelessWidget {
               horizontal: 2.8* SizeConfig.widthMultiplier),
           child: Column(
             children: [
-              SizedBox(height: 100,),
+              SizedBox(height: 10.5337*SizeConfig.heightMultiplier,),
               Center(
                   child: Image.asset(
                 Images.Icon,
-                height: 250,
-                width: 250,
+                height: 26.3343*SizeConfig.heightMultiplier,
+                width: 55.8035*SizeConfig.widthMultiplier,
               )),
               Text(
                 "Success!!",
@@ -34,7 +34,7 @@ class SuccessScreen extends StatelessWidget {
                     color: Colours.Green,
                     fontSize: 6 * SizeConfig.heightMultiplier),
               ),
-              SizedBox(height: 30,),
+              SizedBox(height: 3.1601234*SizeConfig.heightMultiplier,),
               Text(
                 "Welcome aboard! Your account is created. ready—begin tracking your food's expiry dates and reduce waste now.",
                 style: style.copyWith(

@@ -19,20 +19,20 @@ class SignupScreen extends StatelessWidget {
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        toolbarHeight: 65,
+        toolbarHeight: 6.84693*SizeConfig.heightMultiplier,
         automaticallyImplyLeading: false,
         leading: GestureDetector(
            onTap: (){Get.back();},
           child: Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
-            size: 32,
+            size: 3.37079*SizeConfig.heightMultiplier,
           ),
         ),
         centerTitle: true,
         title: Text(
           "Create",
-          style: style.copyWith(fontWeight: FontWeight.w400, fontSize: 32),
+          style: style.copyWith(fontWeight: FontWeight.w400, fontSize: 3.3707*SizeConfig.heightMultiplier),
         ),
       ),
       backgroundColor: Colors.white,
