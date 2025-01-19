@@ -48,6 +48,7 @@ dependencies:
   toastification: ^2.3.0
   hive: 
   hive_flutter:
+  flutter_secure_storage: ^9.2.4
 
 
 dev_dependencies:
