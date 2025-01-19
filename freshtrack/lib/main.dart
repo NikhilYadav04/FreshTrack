@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
-import 'package:freshtrack/screens/home/homeScreen.dart';
+import 'package:freshtrack/screens/home/Homescreen.dart';
 import 'package:freshtrack/screens/main/main_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -14,6 +16,7 @@ import 'package:toastification/toastification.dart';
 void main() async {
   //* Initialize hive
   await Hive.initFlutter();
+   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   await WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MyApp());
@@ -42,12 +45,11 @@ class MyApp extends StatelessWidget {
               final status = snapshot.data.toString();
               if (status == 'Login') {
                 keySecure.getKey();
-                Get.to(() => MainScreen(), transition: Transition.fadeIn);
+                return MainScreen();
               } else {
                 keySecure.getKey();
-                Get.to(() => LoginScreen(), transition: Transition.fadeIn);
+                return HomeScreen();
               }
-              return SizedBox.shrink();
             } else {
               toastMessage(context, "Error!", "${snapshot.error.toString()}",
                   ToastificationType.error);

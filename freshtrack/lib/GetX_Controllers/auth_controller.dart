@@ -1,8 +1,11 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
+import 'package:freshtrack/screens/auth/success_screen.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hive/hive.dart';
@@ -44,7 +47,7 @@ class AuthController extends GetxController {
   //* Functions
 
   //* create account function
-  void createAccount(BuildContext context) async {
+  Future<String> createAccount(BuildContext context) async {
     try {
       isLoadingCreate = true.obs;
 
@@ -53,15 +56,21 @@ class AuthController extends GetxController {
               email: nameControllerCreate.text.toString(),
               password: passwordControllerCreate.text.toString());
 
+      if (!Hive.isBoxOpen('freshbox')) {
+        await keySecure.getKey();
+      }
+
       //* Store Email And Phone As Key-Value Pair In Local Storage
       final _myBox = await Hive.box('freshbox');
       _myBox.put(nameControllerCreate.text.toString(),
           numberControllerCreate.text.toString());
 
       isLoadingCreate = false.obs;
+       Get.back();
 
       toastMessage(context, "Success!", "Account Created Successfully!",
           ToastificationType.success);
+      return "Success";
     } catch (e) {
       if (e is FirebaseAuthException) {
         isLoadingCreate = false.obs;
@@ -79,31 +88,43 @@ class AuthController extends GetxController {
             toastMessage(context, "Error", e.message ?? "An error occurred.",
                 ToastificationType.error);
         }
+        return "Error";
       } else {
         isLoadingCreate = false.obs;
+        print(e.toString());
 
-        toastMessage(context, "Error", "An unexpected error occurred.",
+        toastMessage(context, "Error", e.toString(),
             ToastificationType.error);
+
+       return "Error";
       }
-      ;
     }
   }
 
   //* login account function
-  void loginAccount(BuildContext context) async {
+  Future<String> loginAccount(BuildContext context) async {
     try {
       isLoadingLogin = true.obs;
 
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: nameController.text.toString(), password: passwordController.text.toString());
 
+       if (!Hive.isBoxOpen('freshbox')) {
+        await keySecure.getKey();
+        }
+
       //* Storing User ID And Email In Hive Storage
       final _myBox = await Hive.box('freshbox');
       _myBox.put(userCredential.user!.uid, nameController.text.toString());
+
+      print(_myBox.get(userCredential.user!.uid));
       await Hive.box('auth').put('status', 'Login');
 
       isLoadingLogin = false.obs;
+      Get.to(() => SuccessScreen(),transition: Transition.rightToLeft);
 
       toastMessage(context,"Success!", "Logged In Successfully", ToastificationType.success);
+
+      return "Success";
     } catch (e) {
       isLoadingLogin = false.obs;
        if(e is FirebaseAuthException){
@@ -117,17 +138,19 @@ class AuthController extends GetxController {
         default:
           toastMessage(context,"Error", 'An unknown error occurred: ${e.message}',ToastificationType.error);
       }
+      return "Error";
        }else{
         isLoadingLogin = false.obs;
 
-        toastMessage(context, "Error", "An unexpected error occurred.",
+        toastMessage(context, "Error", e.toString(),
           ToastificationType.error);
+        return "Error";
        }
     }
   }
 
   //* logout account function
-  void logout(BuildContext context) async{
+  Future<String> logout(BuildContext context) async{
     try{
       isLoadingLogout = true.obs;
 
@@ -138,11 +161,14 @@ class AuthController extends GetxController {
       isLoadingLogout = false.obs;
 
       Get.offAll(()=>LoginScreen(),transition: Transition.upToDown);
+
+      return "Sucess";
     }catch(e){
       isLoadingLogout = false.obs;
 
        toastMessage(context, "Error", "An unexpected error occurred.",
           ToastificationType.error);
+      return "Error";
     }
   }
 }

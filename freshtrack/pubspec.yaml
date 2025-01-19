@@ -42,9 +42,10 @@ dependencies:
   curved_navigation_bar: ^1.0.6
   font_awesome_flutter: ^10.8.0
   group_button: ^5.3.4
+  firebase_ui_firestore: ^1.6.3
   firebase_core: ^2.32.0
   cloud_firestore: ^4.17.5
-  firebase_auth: ^4.16.0
+  firebase_auth: ^4.20.0
   toastification: ^2.3.0
   hive: 
   hive_flutter:

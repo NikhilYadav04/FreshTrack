@@ -19,20 +19,24 @@ class SignupScreen extends StatelessWidget {
         child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        toolbarHeight: 6.84693*SizeConfig.heightMultiplier,
+        toolbarHeight: 6.84693 * SizeConfig.heightMultiplier,
         automaticallyImplyLeading: false,
         leading: GestureDetector(
-           onTap: (){Get.back();},
+          onTap: () {
+            Get.back();
+          },
           child: Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
-            size: 3.37079*SizeConfig.heightMultiplier,
+            size: 3.37079 * SizeConfig.heightMultiplier,
           ),
         ),
         centerTitle: true,
         title: Text(
           "Create",
-          style: style.copyWith(fontWeight: FontWeight.w400, fontSize: 3.3707*SizeConfig.heightMultiplier),
+          style: style.copyWith(
+              fontWeight: FontWeight.w400,
+              fontSize: 3.3707 * SizeConfig.heightMultiplier),
         ),
       ),
       backgroundColor: Colors.white,
@@ -91,18 +95,29 @@ class SignupScreen extends StatelessWidget {
                   authController.isVisibleCreate,
                   authController),
               SizedBox(height: 7 * SizeConfig.heightMultiplier),
-              authButton("Create", () {
-                if(authController.keyNameCreate.currentState!.validate() && authController.phoneCreate.currentState!.validate() && authController.keyPasswordCreate.currentState!.validate()){
-                  Get.to( ()=> SuccessScreen(),transition: Transition.rightToLeft);
-                }else{
-
-                }
-              }),
+              Obx(
+                () => authController.isLoadingCreate.value
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : authButton("Create", () async{
+                        if (authController.keyNameCreate.currentState!
+                                .validate() &&
+                            authController.phoneCreate.currentState!
+                                .validate() &&
+                            authController.keyPasswordCreate.currentState!
+                                .validate()) {
+                          await authController.createAccount(context);
+                        } else {}
+                      }),
+              ),
               SizedBox(
                 height: 3.16012 * SizeConfig.heightMultiplier,
               ),
               GestureDetector(
-                onTap: (){Get.back();},
+                onTap: () {
+                  Get.back();
+                },
                 child: RichText(
                   text: TextSpan(
                       text: "Already have an account?",
@@ -116,7 +131,8 @@ class SignupScreen extends StatelessWidget {
                             text: " Log in",
                             style: style.copyWith(
                                 color: Colours.Green,
-                                fontSize: 2.475430 * SizeConfig.heightMultiplier,
+                                fontSize:
+                                    2.475430 * SizeConfig.heightMultiplier,
                                 fontFamily: "Glacial_Regular",
                                 fontWeight: FontWeight.bold))
                       ]),

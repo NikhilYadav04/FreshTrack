@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/GetX_Controllers/main_screen_controller.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/main/add_item_screen.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 // ignore: must_be_immutable
 class MainScreen extends StatelessWidget {
   final MainScreenController mainScreenController = Get.put(MainScreenController());
+  final AuthController authController = Get.put(AuthController());
 
   List<dynamic> screens = [
     SearchRecipesScreen(),
@@ -41,7 +43,10 @@ class MainScreen extends StatelessWidget {
               (
                 onTap: ()=>Get.to(()=>NotificationScreen(),transition: Transition.upToDown),
                 child: Image.asset(Images.Bell,height: 4.42417*SizeConfig.heightMultiplier,width: 9.375*SizeConfig.widthMultiplier,)),
-              SizedBox(width: 1.11607*SizeConfig.widthMultiplier,)
+               IconButton(onPressed: (){
+                authController.logout(context);
+              }, icon: Icon(Icons.logout,color: Colors.white,size: 4.9*SizeConfig.heightMultiplier,),),
+              // SizedBox(width: 1.1*SizeConfig.widthMultiplier,)
             ],
             title: Text("Hello Nikhil,",style: style.copyWith(fontSize: 3.68681*SizeConfig.heightMultiplier,fontFamily: "Poppins",color: Colors.white,fontWeight: FontWeight.w600),),
           ),
