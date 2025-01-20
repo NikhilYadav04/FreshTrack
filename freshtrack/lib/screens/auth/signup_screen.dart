@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
-import 'package:freshtrack/screens/auth/success_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
