@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freshtrack/helper/keySecure.dart';
@@ -19,6 +20,11 @@ class SearchRecipeController extends GetxController {
 
   //* loader
   RxBool isLoadingUpload = false.obs;
+
+  //*lists
+  RxList<dynamic> filtered = [].obs;
+  RxList<dynamic> itemList = [].obs;
+  RxList<dynamic> checkList = [].obs;
 
   //* add image in cloudinary
   Future<String> addImage(File image, BuildContext context) async {
@@ -186,6 +192,39 @@ class SearchRecipeController extends GetxController {
     } catch (e) {
       print("Compression error: ${e.toString()}");
       return null;
+    }
+  }
+
+  //* get email
+  String? getEmail() {
+    return FirebaseAuth.instance.currentUser!.email;
+  }
+
+  //*fetch items list
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchList(String email) {
+    print(email);
+    print(FirebaseFirestore.instance
+        .collection("expiry")
+        .where("email", isEqualTo: email)
+        .get());
+
+    return FirebaseFirestore.instance
+        .collection("expiry")
+        .where("email", isEqualTo: email)
+        .snapshots();
+  }
+
+  //* filter items
+  void filterItem(String keyword) {
+    if (keyword.isEmpty) {
+      filtered.value = itemList;
+    } else {
+      filtered.value = itemList
+          .where((item) => item["p_name"]
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toLowerCase()))
+          .toList();
     }
   }
 

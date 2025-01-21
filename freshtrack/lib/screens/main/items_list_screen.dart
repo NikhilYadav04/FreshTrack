@@ -67,6 +67,7 @@ class ItemsListScreen extends StatelessWidget {
                     final doc = snapshot.data!.docs.first;
                     final items = doc["items"];
                     itemListController.itemList.value = items;
+                    itemListController.filtered.value = items;
                     List<dynamic> itemList = itemListController.filtered;
                     return Obx(
                       ()=> ListView.builder(
