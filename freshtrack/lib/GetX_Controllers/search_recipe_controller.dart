@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 
 class SearchRecipeController extends GetxController {
   //* controllers for adding item and searching
@@ -26,14 +28,18 @@ class SearchRecipeController extends GetxController {
       return '';
     }
 
-    final url = Uri.parse('https://api.cloudinary.com/v1_1/${keySecure.cloudinary_name}/upload');
+    final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/${keySecure.cloudinary_name}/upload');
 
     try {
+      final compressedImageBytes = await compressAndResizeImage(image);
+
       final request = http.MultipartRequest('POST', url)
         ..fields['upload_preset'] = 'e_items'
-        ..files.add(await http.MultipartFile.fromPath('file', image.path));
-      
-      print(image);
+        ..files.add(await http.MultipartFile.fromBytes(
+            'file', compressedImageBytes!,
+            filename: "compressed.jpg"));
+
       print("Hello");
 
       final response = await request.send().timeout(Duration(seconds: 20));
@@ -43,8 +49,7 @@ class SearchRecipeController extends GetxController {
         final responseString = String.fromCharCodes(responseData);
         final jsonMap = jsonDecode(responseString);
 
-         print("End");
-
+        print("End");
 
         if (jsonMap['url'] != null) {
           return jsonMap['url'];
@@ -52,15 +57,20 @@ class SearchRecipeController extends GetxController {
           return '';
         }
       } else {
+        final errorResponseData = await response.stream.toBytes();
+        final errorResponseString = String.fromCharCodes(errorResponseData);
+        print(
+            "Failed with status: ${response.statusCode}\nResponse: $errorResponseString");
         toastMessage(
           context,
           "Image Error!",
-          "Failed with status: ${response.statusCode}",
+          "Failed with status: ${response.statusCode}\nResponse: $errorResponseString",
           ToastificationType.error,
         );
         return '';
       }
     } catch (e) {
+      print(e.toString());
       toastMessage(
         context,
         "Image Error!",
@@ -122,6 +132,60 @@ class SearchRecipeController extends GetxController {
       toastMessage(
           context, "Error", "Failed to add item: $e", ToastificationType.error);
       return 'Failed';
+    }
+  }
+
+  //* compress image and resize to square
+  Future<Uint8List?> compressAndResizeImage(File image) async {
+    try {
+      final inputBytes = await image.readAsBytes();
+      final decodedImage = img.decodeImage(inputBytes);
+      if (decodedImage == null) {
+        print("Failed to decode the image.");
+        return null;
+      }
+
+      final cropSize = decodedImage.width < decodedImage.height
+          ? decodedImage.width
+          : decodedImage.height;
+
+      final xOffset = (decodedImage.width - cropSize) ~/ 2;
+      final yOffset = (decodedImage.height - cropSize) ~/ 2;
+
+      final croppedImage = img.copyCrop(
+        decodedImage,
+        x: xOffset,
+        y: yOffset,
+        height: cropSize,
+        width: cropSize,
+      );
+
+      final resizedImage = img.copyResize(
+        croppedImage,
+        width: 500,
+        height: 500,
+      );
+
+      final resizedBytes =
+          Uint8List.fromList(img.encodeJpg(resizedImage, quality: 70));
+
+      final compressedImage = await FlutterImageCompress.compressWithList(
+        resizedBytes,
+        minWidth: 500,
+        minHeight: 500,
+        quality: 60,
+      );
+
+      if (compressedImage.isEmpty) {
+        print("Compression resulted in an empty list.");
+        return null;
+      }
+
+      print("Compression successful. Size: ${compressedImage.length}");
+      return Uint8List.fromList(compressedImage);
+    } catch (e) {
+      print("Compression error: ${e.toString()}");
+      return null;
     }
   }
 

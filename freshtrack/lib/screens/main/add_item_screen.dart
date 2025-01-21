@@ -26,7 +26,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _addImage() async {
     final XFile? _pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     setState(() {
       if (_pickedFile != null) {
         _imagefile = File(_pickedFile.path);
