@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/search_recipe_controller.dart';
+import 'package:freshtrack/helper/DateFormatter.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -62,8 +63,10 @@ class SearchRecipesScreen extends StatelessWidget {
                   } else {
                     final doc = snapshot.data!.docs.first;
                     final items = doc["items"];
-                    searchRecipeController.itemList.value = items;
-                    searchRecipeController.filtered.value = items;
+                    searchRecipeController.itemList.value =
+                        DateTimeFormatter.findExpiry(items);
+                    searchRecipeController.filtered.value =
+                        DateTimeFormatter.findExpiry(items);
                     List<dynamic> itemList = searchRecipeController.filtered;
                     print("checkList is ${searchRecipeController.checkList}");
                     return Obx(
@@ -78,14 +81,14 @@ class SearchRecipesScreen extends StatelessWidget {
                                   GestureDetector(
                                     onTap: () {
                                       searchRecipeController.checkList
-                                          .add(itemList[index]["p_name"]);
+                                          .add(itemList[index]);
                                     },
                                     child: CheckboxListTile(
                                       activeColor: Colours.Green,
                                       value: searchRecipeController.checkList
-                                          .contains(itemList[index]["p_name"]),
+                                          .contains(itemList[index]),
                                       title: Text(
-                                        itemList[index]["p_name"],
+                                        itemList[index],
                                         style: style.copyWith(
                                           fontSize: 3.054788 *
                                               SizeConfig.heightMultiplier,
@@ -98,16 +101,14 @@ class SearchRecipesScreen extends StatelessWidget {
                                         if (value == true) {
                                           //* Add the item if it is checked
                                           if (!searchRecipeController.checkList
-                                              .contains(
-                                                  itemList[index]["p_name"])) {
+                                              .contains(itemList[index])) {
                                             searchRecipeController.checkList
-                                                .add(itemList[index]["p_name"]);
+                                                .add(itemList[index]);
                                           }
                                         } else {
                                           //* Remove the item if it is unchecked
                                           searchRecipeController.checkList
-                                              .remove(
-                                                  itemList[index]["p_name"]);
+                                              .remove(itemList[index]);
                                         }
                                       },
                                     ),
