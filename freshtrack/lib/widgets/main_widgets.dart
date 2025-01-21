@@ -4,9 +4,12 @@ import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
 
 Widget fieldItem(BuildContext context, TextEditingController controller,
-    String label, TextInputType type) {
+    String label, TextInputType type,void Function(String) onTap,) {
   return Form(
       child: TextFormField(
+    onChanged: (value) {
+      onTap(value);
+    },
     keyboardType: type,
     style: style.copyWith(
         color: Colors.black,

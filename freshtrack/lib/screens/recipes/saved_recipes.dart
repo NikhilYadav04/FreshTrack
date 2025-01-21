@@ -33,7 +33,7 @@ class SavedRecipesScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(
                 horizontal: 2.67857 * SizeConfig.widthMultiplier),
             child: fieldItem(context, savedRecipeController.searchController,
-                "Search Recipe", TextInputType.name),
+                "Search Recipe", TextInputType.name,(arg){}),
           ),
           SizedBox(
             height: 2.63343 * SizeConfig.heightMultiplier,

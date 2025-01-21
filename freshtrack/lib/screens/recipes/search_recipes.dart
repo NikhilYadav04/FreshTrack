@@ -32,7 +32,7 @@ class SearchRecipesScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 2.67857*SizeConfig.widthMultiplier),
             child: fieldItem(context, searchRecipeController.searchController,
-                "Search Items", TextInputType.name),
+                "Search Items", TextInputType.name,(arg){}),
           ),
           SizedBox(
             height: 2.63343*SizeConfig.heightMultiplier,
@@ -72,4 +72,7 @@ class SearchRecipesScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void dummy(int val){
 }
