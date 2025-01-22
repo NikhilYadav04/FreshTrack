@@ -68,7 +68,6 @@ class SearchRecipesScreen extends StatelessWidget {
                     searchRecipeController.filtered.value =
                         DateTimeFormatter.findExpiry(items);
                     List<dynamic> itemList = searchRecipeController.filtered;
-                    print("checkList is ${searchRecipeController.checkList}");
                     return Obx(
                       () => ListView.builder(
                           shrinkWrap: true,
@@ -127,10 +126,20 @@ class SearchRecipesScreen extends StatelessWidget {
           SizedBox(
             height: 4.740185 * SizeConfig.heightMultiplier,
           ),
-          Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 3.125 * SizeConfig.widthMultiplier),
-              child: mainButton("Search AI Recipes", () {}))
+          Obx(
+            () => searchRecipeController.isLoading.value
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: Colours.Green,
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 3.125 * SizeConfig.widthMultiplier),
+                    child: mainButton("Search AI Recipes", () {
+                      searchRecipeController.geminiCallAPI();
+                    })),
+          )
         ],
       ),
     );

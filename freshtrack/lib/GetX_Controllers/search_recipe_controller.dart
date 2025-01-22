@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
+import 'package:freshtrack/styling/strings.dart';
 import 'package:get/get.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:toastification/toastification.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
@@ -25,6 +27,9 @@ class SearchRecipeController extends GetxController {
   RxList<dynamic> filtered = [].obs;
   RxList<dynamic> itemList = [].obs;
   RxList<dynamic> checkList = [].obs;
+
+  //* loader
+  RxBool isLoading = false.obs;
 
   //* add image in cloudinary
   Future<String> addImage(File image, BuildContext context) async {
@@ -202,11 +207,6 @@ class SearchRecipeController extends GetxController {
 
   //*fetch items list
   Stream<QuerySnapshot<Map<String, dynamic>>> fetchList(String email) {
-    print(email);
-    print(FirebaseFirestore.instance
-        .collection("expiry")
-        .where("email", isEqualTo: email)
-        .get());
 
     return FirebaseFirestore.instance
         .collection("expiry")
@@ -225,6 +225,37 @@ class SearchRecipeController extends GetxController {
               .toLowerCase()
               .contains(keyword.toLowerCase()))
           .toList();
+    }
+  }
+
+  //* gemini api call
+  Future<void> geminiCallAPI() async {
+    isLoading.value = true;
+
+    try {
+      final model = GenerativeModel(
+        model: 'gemini-2.0-flash-exp',
+        apiKey: keySecure.gemini_key,
+        generationConfig: GenerationConfig(
+          temperature: 1,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 8192,
+          responseMimeType: 'text/plain',
+        ),
+      );
+      final chat = model.startChat(history: []);
+
+      final message = Strings.prompt;
+      final content = Content.text(message);
+
+      final response = await chat.sendMessage(content);
+      print(response.text);
+
+      isLoading.value = false;
+    } catch (e) {
+      isLoading.value = false;
+      print("An error occurred: $e");
     }
   }
 

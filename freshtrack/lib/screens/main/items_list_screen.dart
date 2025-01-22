@@ -151,7 +151,6 @@ class ItemsListScreen extends StatelessWidget {
 }
 
 Widget imageDisplay(String image) {
-  print(image.split("/")[7].split(".")[0]);
   return CldImageWidget(
       publicId: image.split("/")[7].split(".")[0],
       transformation: Transformation()

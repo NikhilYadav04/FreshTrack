@@ -44,8 +44,7 @@ class DateTimeFormatter {
 
       if (duration.inDays >= 0 && duration.inDays < 5) {
         products.add(item["p_name"]);
-      }
-      print("Products is ${products}");
+      };
     }
     return products;
   }
