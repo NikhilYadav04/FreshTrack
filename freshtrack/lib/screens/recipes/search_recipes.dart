@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/search_recipe_controller.dart';
 import 'package:freshtrack/helper/DateFormatter.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
+import 'package:freshtrack/screens/recipes/gemini_recipes.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
 import 'package:freshtrack/widgets/main_widgets.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 // ignore: must_be_immutable
@@ -136,8 +138,17 @@ class SearchRecipesScreen extends StatelessWidget {
                 : Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 3.125 * SizeConfig.widthMultiplier),
-                    child: mainButton("Search AI Recipes", () {
-                      searchRecipeController.geminiCallAPI();
+                    child: mainButton("Search AI Recipes", () async {
+                      final List<Map<String, String>> list =
+                          await searchRecipeController.geminiCallAPI(context);
+                      print(list);
+                      if (list.isNotEmpty) {
+                        Get.to(
+                            () => GeminiRecipes(
+                                  recipes: list,
+                                ),
+                            transition: Transition.fade);
+                      }
                     })),
           )
         ],

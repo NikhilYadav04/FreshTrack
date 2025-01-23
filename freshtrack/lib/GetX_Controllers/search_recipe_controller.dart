@@ -207,7 +207,6 @@ class SearchRecipeController extends GetxController {
 
   //*fetch items list
   Stream<QuerySnapshot<Map<String, dynamic>>> fetchList(String email) {
-
     return FirebaseFirestore.instance
         .collection("expiry")
         .where("email", isEqualTo: email)
@@ -229,33 +228,72 @@ class SearchRecipeController extends GetxController {
   }
 
   //* gemini api call
-  Future<void> geminiCallAPI() async {
+  Future<List<Map<String, String>>> geminiCallAPI(BuildContext context) async {
     isLoading.value = true;
 
     try {
-      final model = GenerativeModel(
-        model: 'gemini-2.0-flash-exp',
-        apiKey: keySecure.gemini_key,
-        generationConfig: GenerationConfig(
-          temperature: 1,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 8192,
-          responseMimeType: 'text/plain',
-        ),
-      );
-      final chat = model.startChat(history: []);
+      if (checkList.isNotEmpty) {
+        final model = GenerativeModel(
+          model: 'gemini-2.0-flash-exp',
+          apiKey: keySecure.gemini_key,
+          generationConfig: GenerationConfig(
+            temperature: 1,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 8192,
+            responseMimeType: 'text/plain',
+          ),
+        );
+        final chat = model.startChat(history: []);
 
-      final message = Strings.prompt;
-      final content = Content.text(message);
+        final message = Strings.prompt(checkList);
+        final content = Content.text(message);
 
-      final response = await chat.sendMessage(content);
-      print(response.text);
+        final response = await chat.sendMessage(content);
 
-      isLoading.value = false;
+        String cleanedResponse =
+            response.text!.replaceAll(RegExp(r'```json|```'), '').trim();
+
+        var decoded = jsonDecode(cleanedResponse);
+
+        //* Convert to list of maps
+        List<Map<String, String>> list = decoded.map((item) {
+          if (item is Map<String, dynamic>) {
+            return Map<String, String>.from(item);
+          }
+          throw FormatException("Expected Map, but got ${item.runtimeType}");
+        }).toList();
+        isLoading.value = false;
+
+        return list;
+      } else {
+        toastMessage(context, "Empty Items List!", "No Food Items Provided",
+            ToastificationType.warning);
+        isLoading.value = false;
+        return [];
+      }
     } catch (e) {
       isLoading.value = false;
       print("An error occurred: $e");
+      return [];
+    }
+  }
+
+  //* get recipe photo from api
+  Future<String> getImageRecipe() async {
+    try {
+      final Url = Uri.parse(
+          "https://api.spoonacular.com/recipes/complexSearch?query=pasta&number=2&apiKey=${keySecure.spoonacular_key}");
+
+      final response = await http.get(Url);
+
+      final responseBody = jsonDecode(response.body);
+      final imageURL = responseBody["results"][0]["image"];
+
+      return imageURL;
+    } catch (e) {
+      print(e.toString());
+      return "";
     }
   }
 
