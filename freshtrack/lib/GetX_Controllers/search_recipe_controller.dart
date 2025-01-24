@@ -249,12 +249,16 @@ class SearchRecipeController extends GetxController {
         final message = Strings.prompt(checkList);
         final content = Content.text(message);
 
+        print(Strings.prompt(checkList));
+
         final response = await chat.sendMessage(content);
+
+        print(response);
 
         String cleanedResponse =
             response.text!.replaceAll(RegExp(r'```json|```'), '').trim();
 
-        var decoded = jsonDecode(cleanedResponse);
+        List<dynamic> decoded = jsonDecode(cleanedResponse);
 
         //* Convert to list of maps
         List<Map<String, String>> list = decoded.map((item) {
@@ -263,6 +267,16 @@ class SearchRecipeController extends GetxController {
           }
           throw FormatException("Expected Map, but got ${item.runtimeType}");
         }).toList();
+
+        //* Fetch images
+        for (int i = 0; i < list.length; i++) {
+          final recipe = list[i]["title"];
+          if (recipe != null) {
+            String image = await getImageRecipe(recipe);
+            list[i]["image"] = image;
+          }
+        }
+
         isLoading.value = false;
 
         return list;
@@ -280,10 +294,11 @@ class SearchRecipeController extends GetxController {
   }
 
   //* get recipe photo from api
-  Future<String> getImageRecipe() async {
+  Future<String> getImageRecipe(String title) async {
     try {
+      final recipe = title.split(" ")[2];
       final Url = Uri.parse(
-          "https://api.spoonacular.com/recipes/complexSearch?query=pasta&number=2&apiKey=${keySecure.spoonacular_key}");
+          "https://api.spoonacular.com/recipes/complexSearch?query=$recipe&number=2&apiKey=${keySecure.spoonacular_key}");
 
       final response = await http.get(Url);
 

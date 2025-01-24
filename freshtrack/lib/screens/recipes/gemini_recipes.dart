@@ -1,14 +1,18 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:freshtrack/GetX_Controllers/saved_recipe_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
+import 'package:group_button/group_button.dart';
 
 // ignore: must_be_immutable
 class GeminiRecipes extends StatelessWidget {
+  final SavedRecipeController savedRecipeController =
+      Get.put(SavedRecipeController());
   List<Map<String, String>> recipes;
   GeminiRecipes({
     Key? key,
@@ -73,50 +77,107 @@ class GeminiRecipes extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: 2.678571 * SizeConfig.widthMultiplier,
-                            vertical: 1.053 * SizeConfig.heightMultiplier),
+                            horizontal: 3.125 * SizeConfig.widthMultiplier,
+                            vertical: 1.2 * SizeConfig.heightMultiplier),
                         child: Card(
-                          elevation: 16,
-                          shadowColor: Colours.Green,
+                          elevation: 15,
+                          shadowColor: Colors.green,
                           color: Colors.white,
-                          child: Container(
-                              height: 43.188353 * SizeConfig.heightMultiplier,
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 1 * SizeConfig.heightMultiplier),
-                              child: Column(
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              dividerColor: Colors.transparent,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: ExpansionTile(
                                 children: [
-                                  Expanded(
-                                      flex: 1,
-                                      child: ListTile(
-                                        leading: Image.asset(
-                                            "assets/main/burger.png"),
-                                        title: Text(
-                                          recipes[index]["title"].toString(),
-                                          style: Style.copyWith(
-                                              color: Colors.green.shade800,
-                                              fontSize: 2.73877 *
-                                                  SizeConfig.heightMultiplier,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
-                                  Expanded(
-                                      flex: 4,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 1.785714 *
-                                                SizeConfig.widthMultiplier),
-                                        child: Text(
-                                            recipes[index]["making"].toString(),
-                                            // """Preheat your oven to 400°F (200°C). Unroll a store-bought puff pastry sheet onto a baking sheet. Lightly score a border about an inch from the edge. Spread a thin layer of your favorite cheese inside the border, leaving a small gap around the edge. Layer sliced tomatoes and thinly sliced onions over the cheese. Bake for 20-25 minutes, or until the crust is golden brown and the cheese is melted and bubbly. Let it cool slightly before serving.""",
-                                            style: Style.copyWith(
-                                              color: Colors.grey.shade900,
-                                              fontSize: 1.896074 *
-                                                  SizeConfig.heightMultiplier,
-                                            )),
-                                      )),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    child: Text(
+                                      recipes[index]["making"].toString(),
+                                      style: Style.copyWith(
+                                        color: Colors.grey.shade900,
+                                        fontSize:
+                                            2 * SizeConfig.heightMultiplier,
+                                      ),
+                                    ),
+                                  )
                                 ],
-                              )),
+                                leading: SizedBox(
+                                    height:
+                                        6.32024 * SizeConfig.heightMultiplier,
+                                    width:
+                                        13.39285 * SizeConfig.widthMultiplier,
+                                    child: recipes[index]["image"].toString() == "" ? Image.asset("assets/main/burger.png") : Image.network(
+                                        recipes[index]["image"].toString())),
+                                title: FittedBox(
+                                  child: Text(
+                                    maxLines: 2,
+                                    recipes[index]["title"].toString(),
+                                    style: Style.copyWith(
+                                        color: Colors.green.shade800,
+                                        fontSize:
+                                            2.7 * SizeConfig.heightMultiplier,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                subtitle: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: Obx(
+                                    () => GroupButton(
+                                      onSelected: (value, Index, isSelected) {
+                                        savedRecipeController.addRecipe(
+                                            context,
+                                            recipes[index]["title"].toString(),
+                                            recipes[index]["making"]
+                                                .toString(),recipes[index]["image"]
+                                                .toString(),recipes[index]["ingredients"]
+                                                .toString());
+                                      },
+                                      options: GroupButtonOptions(
+                                          buttonHeight: 35,
+                                          buttonWidth: 75,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          //* if recipe is saved is checked in local storage
+                                          selectedColor: savedRecipeController
+                                                  .saveList
+                                                  .any((map) =>
+                                                      map[recipes[index]["title"]
+                                                          .toString()] ==
+                                                      true)
+                                              ? Colors.green
+                                              : Colors.red,
+                                          unselectedColor:
+                                              savedRecipeController.saveList.any((map) => map[recipes[index]["title"].toString()] == true)
+                                                  ? Colors.green
+                                                  : Colors.red,
+                                          mainGroupAlignment:
+                                              MainGroupAlignment.start,
+                                          selectedTextStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontFamily: "Poppins"),
+                                          unselectedTextStyle: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontFamily: "Poppins")),
+                                      buttons: [
+                                        savedRecipeController.saveList.any(
+                                                (map) =>
+                                                    map[recipes[index]["title"]
+                                                        .toString()] ==
+                                                    true)
+                                            ? 'Saved'
+                                            : 'Save'
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ));
                   }),
               SizedBox(
