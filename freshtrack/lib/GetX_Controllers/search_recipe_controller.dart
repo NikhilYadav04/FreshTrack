@@ -25,8 +25,9 @@ class SearchRecipeController extends GetxController {
 
   //*lists
   RxList<dynamic> filtered = [].obs;
-  RxList<dynamic> itemList = [].obs;
   RxList<dynamic> checkList = [].obs;
+
+  RxList<dynamic> itemList = [].obs;
 
   //* loader
   RxBool isLoading = false.obs;
@@ -97,46 +98,55 @@ class SearchRecipeController extends GetxController {
     try {
       isLoadingUpload.value = true;
 
-      final url = await addImage(image, context);
-
-      if (url.isEmpty) {
-        isLoadingUpload.value = false;
-        toastMessage(
-            context, "Error", "Image upload failed", ToastificationType.error);
-        return 'Image Upload Failed';
-      }
-
-      print("Reached here");
-
-      List<Map<String, dynamic>> items = [
-        {
-          "p_name": nameController.text.trim(),
-          "e_date": dateController.text.trim(),
-          "imageURL": url,
-        }
-      ];
-
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection("expiry");
 
       QuerySnapshot querySnapshot =
           await collectionReference.where("email", isEqualTo: email).get();
 
-      if (querySnapshot.docs.isNotEmpty) {
-        String docID = querySnapshot.docs.first.id;
-        await collectionReference.doc(docID).update({
-          "items": FieldValue.arrayUnion(items),
-        });
+      List<dynamic> list = querySnapshot.docs.first["items"];
+
+      if (list.length >= 10) {
+        toastMessage(context, "Limit Exceeded",
+            "You can add only 10 Items in List", ToastificationType.warning);
+        isLoadingUpload.value = false;
       } else {
-        await collectionReference.add({
-          "email": email,
-          "items": items,
-        });
+        final url = await addImage(image, context);
+
+        if (url.isEmpty) {
+          isLoadingUpload.value = false;
+          toastMessage(context, "Error", "Image upload failed",
+              ToastificationType.error);
+          return 'Image Upload Failed';
+        }
+
+        print("Reached here");
+
+        List<Map<String, dynamic>> items = [
+          {
+            "p_name": nameController.text.trim(),
+            "e_date": dateController.text.trim(),
+            "imageURL": url,
+          }
+        ];
+
+        if (querySnapshot.docs.isNotEmpty) {
+          String docID = querySnapshot.docs.first.id;
+          await collectionReference.doc(docID).update({
+            "items": FieldValue.arrayUnion(items),
+          });
+        } else {
+          await collectionReference.add({
+            "email": email,
+            "items": items,
+          });
+        }
+
+        toastMessage(context, "Success", "Item Added Successfully",
+            ToastificationType.success);
+        isLoadingUpload.value = false;
       }
 
-      toastMessage(context, "Success", "Item Added Successfully",
-          ToastificationType.success);
-      isLoadingUpload.value = false;
       return 'Success';
     } catch (e) {
       isLoadingUpload.value = false;
@@ -219,7 +229,7 @@ class SearchRecipeController extends GetxController {
       filtered.value = itemList;
     } else {
       filtered.value = itemList
-          .where((item) => item["p_name"]
+          .where((item) => item
               .toString()
               .toLowerCase()
               .contains(keyword.toLowerCase()))

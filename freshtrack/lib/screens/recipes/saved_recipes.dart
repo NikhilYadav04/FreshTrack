@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/saved_recipe_controller.dart';
@@ -33,8 +34,12 @@ class SavedRecipesScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: 2.67857 * SizeConfig.widthMultiplier),
-            child: fieldItem(context, savedRecipeController.searchController,
-                "Search Recipe", TextInputType.name, savedRecipeController.filterItem),
+            child: fieldItem(
+                context,
+                savedRecipeController.searchController,
+                "Search Recipe",
+                TextInputType.name,
+                savedRecipeController.filterItem),
           ),
           SizedBox(
             height: 2.63343 * SizeConfig.heightMultiplier,
@@ -61,7 +66,7 @@ class SavedRecipesScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(
                         horizontal: 2.67857 * SizeConfig.widthMultiplier),
                     child: Obx(
-                      ()=> ListView.builder(
+                      () => ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: itemList.length,
@@ -69,15 +74,18 @@ class SavedRecipesScreen extends StatelessWidget {
                             return Column(
                               children: [
                                 GestureDetector(
-                                  onTap: () => Get.to(() => RecipeDetailScreen(
-                                    title: itemList[index]["title"],
-                                    ingredients: itemList[index]["ingredients"],
-                                    image: itemList[index]["image"],
-                                    making: itemList[index]["making"],
-                                  ),
+                                  onTap: () => Get.to(
+                                      () => RecipeDetailScreen(
+                                            title: itemList[index]["title"],
+                                            ingredients: itemList[index]
+                                                ["ingredients"],
+                                            image: itemList[index]["image"],
+                                            making: itemList[index]["making"],
+                                          ),
                                       transition: Transition.fadeIn),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 0),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 0),
                                     height:
                                         17.90736 * SizeConfig.heightMultiplier,
                                     child: Card(
@@ -89,17 +97,24 @@ class SavedRecipesScreen extends StatelessWidget {
                                           Expanded(
                                             flex: 2,
                                             child: ClipRRect(
-                                                borderRadius: BorderRadius
-                                                    .circular(2.106748 *
-                                                        SizeConfig
-                                                            .heightMultiplier),
-                                                child: Image.network(
-                                                  itemList[index]["image"],
-                                                  height: 10.5 *
-                                                      SizeConfig.heightMultiplier,
-                                                  width: 22.5 *
-                                                      SizeConfig.widthMultiplier,
-                                                )),
+                                              borderRadius: BorderRadius
+                                                  .circular(2.106748 *
+                                                      SizeConfig
+                                                          .heightMultiplier),
+                                              child: CachedNetworkImage(
+                                                imageUrl: itemList[index]
+                                                    ["image"],
+                                                height: 10.5 *
+                                                    SizeConfig.heightMultiplier,
+                                                width: 22.5 *
+                                                    SizeConfig.widthMultiplier,
+                                                placeholder: (context, url) =>
+                                                    Center(child: CircularProgressIndicator(color: Colours.Green,)),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.error),
+                                              ),
+                                            ),
                                           ),
                                           Expanded(
                                             flex: 3,
@@ -109,12 +124,13 @@ class SavedRecipesScreen extends StatelessWidget {
                                               children: [
                                                 SizedBox(
                                                   height: 2.10674 *
-                                                      SizeConfig.heightMultiplier,
+                                                      SizeConfig
+                                                          .heightMultiplier,
                                                 ),
                                                 FittedBox(
                                                   child: Padding(
-                                                    padding:
-                                                        EdgeInsets.only(right: 8),
+                                                    padding: EdgeInsets.only(
+                                                        right: 8),
                                                     child: Text(
                                                       itemList[index]["title"],
                                                       style: style.copyWith(
@@ -131,11 +147,12 @@ class SavedRecipesScreen extends StatelessWidget {
                                                 ),
                                                 SizedBox(
                                                   height: 1.5800 *
-                                                      SizeConfig.heightMultiplier,
+                                                      SizeConfig
+                                                          .heightMultiplier,
                                                 ),
                                                 Text(
                                                   itemList[index]["ingredients"]
-                                                  .toString(),
+                                                      .toString(),
                                                   maxLines: 3,
                                                   style: style.copyWith(
                                                       fontFamily: "Poppins",
@@ -154,25 +171,19 @@ class SavedRecipesScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 1.896074 * SizeConfig.heightMultiplier,
+                                  height:
+                                      1.896074 * SizeConfig.heightMultiplier,
                                 )
                               ],
                             );
                           }),
                     ),
                   );
-                } else if(snapshot.data == null || snapshot.data.length == 0){
+                } else {
                   return Center(
                     child: Text(
                       "No Saved Recipes",
-                      style: style.copyWith(fontSize: 24,color: Colors.black),
-                    ),
-                  );
-                }else{
-                  return Center(
-                    child: Text(
-                      "No Saved Recipes",
-                      style: style.copyWith(fontSize: 24,color: Colors.black),
+                      style: style.copyWith(fontSize: 24, color: Colors.black),
                     ),
                   );
                 }

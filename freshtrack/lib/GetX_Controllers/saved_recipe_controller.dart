@@ -33,24 +33,32 @@ class SavedRecipeController extends GetxController {
 
       QuerySnapshot querySnapshot =
           await collectionReference.where("email", isEqualTo: email).get();
+      ;
 
-      //* add saved recipe in local hive box to check if it is saved
-      saveList.add({"${title}": true});
-
-      if (querySnapshot.docs.isNotEmpty) {
-        final docID = querySnapshot.docs.first.id;
-
-        await collectionReference
-            .doc(docID)
-            .update({"recipes": FieldValue.arrayUnion(recipe)});
-        toastMessage(context, "Saved", "Recipe Saved Successfully!",
-            ToastificationType.success);
-        return "Success";
+      List<dynamic> list = querySnapshot.docs.first["recipes"];
+      if (list.length >= 10) {
+        toastMessage(context, "Limit Exceeded", "Only 10 recipes can be saved",
+            ToastificationType.warning);
+        return "Limit Exceeded";
       } else {
-        await collectionReference.add(recipe);
-        toastMessage(context, "Saved", "Recipe Saved Successfully!",
-            ToastificationType.success);
-        return "Success";
+        //* add saved recipe in a list to check if it is saved
+        saveList.add({"${title}": true});
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final docID = querySnapshot.docs.first.id;
+
+          await collectionReference
+              .doc(docID)
+              .update({"recipes": FieldValue.arrayUnion(recipe)});
+          toastMessage(context, "Saved", "Recipe Saved Successfully!",
+              ToastificationType.success);
+          return "Success";
+        } else {
+          await collectionReference.add(recipe);
+          toastMessage(context, "Saved", "Recipe Saved Successfully!",
+              ToastificationType.success);
+          return "Success";
+        }
       }
     } catch (e) {
       print(e.toString());
@@ -94,7 +102,8 @@ class SavedRecipeController extends GetxController {
   }
 
   //* delete saved recipes
-  Future<void> deleteItem(BuildContext context,String email, String title, String making) async {
+  Future<void> deleteItem(
+      BuildContext context, String email, String title, String making) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("saved")
@@ -111,7 +120,8 @@ class SavedRecipeController extends GetxController {
 
       await documentReference.update({"recipes": recipes});
 
-      toastMessage(context,  "Deleted", "Recipe Deleted Successfully",ToastificationType.success);
+      toastMessage(context, "Deleted", "Recipe Deleted Successfully",
+          ToastificationType.success);
     } catch (e) {
       print(e.toString());
     }
