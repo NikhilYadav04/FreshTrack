@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
+import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/screens/auth/signup_screen.dart';
+import 'package:freshtrack/services/local_notifications.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -88,15 +90,22 @@ class LoginScreen extends StatelessWidget {
               SizedBox(
                 height: 2.94944 * SizeConfig.heightMultiplier,
               ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  "Forgot Password?",
-                  style: style.copyWith(
-                      color: Colors.grey.shade800,
-                      fontSize: 2.63343 * SizeConfig.heightMultiplier,
-                      fontFamily: "Glacial_Regular",
-                      fontWeight: FontWeight.bold),
+              GestureDetector(
+                onTap: (){
+                  print("noti");
+                 // LocalNotifications.closePeriodicNotification(1);
+                 LocalNotifications.periodicNotification(title: "This is a periodic notification.", body: "Hello world!", payload: "No Data");
+                },
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Text(
+                    "Forgot Password?",
+                    style: style.copyWith(
+                        color: Colors.grey.shade800,
+                        fontSize: 2.63343 * SizeConfig.heightMultiplier,
+                        fontFamily: "Glacial_Regular",
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               SizedBox(height: 3.6868 * SizeConfig.heightMultiplier),

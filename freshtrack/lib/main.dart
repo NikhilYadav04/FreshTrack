@@ -7,6 +7,7 @@ import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/home/Homescreen.dart';
 import 'package:freshtrack/screens/main/main_screen.dart';
+import 'package:freshtrack/services/local_notifications.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   // ignore: deprecated_member_use
   CloudinaryContext.cloudinary = await Cloudinary.fromCloudName(cloudName: keySecure.cloudinary_name);
+  await LocalNotifications.init();
   await WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MyApp());
