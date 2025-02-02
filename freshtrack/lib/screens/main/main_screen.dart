@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/GetX_Controllers/main_screen_controller.dart';
+import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/main/add_item_screen.dart';
@@ -25,6 +26,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final NotificationController notificationController = Get.put(NotificationController());
   final MainScreenController mainScreenController =
       Get.put(MainScreenController());
   String name = "";

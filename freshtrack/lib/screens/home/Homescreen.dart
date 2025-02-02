@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/home_controller.dart';
+import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/onboard/Onboard1.dart';
 import 'package:freshtrack/screens/onboard/Onboard2.dart';
@@ -11,6 +12,7 @@ import 'package:slider_button/slider_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatelessWidget {
+  final NotificationController notificationController = Get.put(NotificationController());
   final HomeController _homeController = Get.put(HomeController());
   HomeScreen({super.key});
 

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
-import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/screens/auth/signup_screen.dart';
-import 'package:freshtrack/services/local_notifications.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -94,7 +92,7 @@ class LoginScreen extends StatelessWidget {
                 onTap: (){
                   print("noti");
                  // LocalNotifications.closePeriodicNotification(1);
-                 LocalNotifications.periodicNotification(title: "This is a periodic notification.", body: "Hello world!", payload: "No Data");
+                // LocalNotifications.periodicNotification(title: "This is a periodic notification.", body: "Hello world!", payload: "No Data");
                 },
                 child: Align(
                   alignment: Alignment.bottomRight,

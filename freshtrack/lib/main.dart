@@ -1,13 +1,15 @@
 import 'package:cloudinary_flutter/cloudinary_context.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/home/Homescreen.dart';
 import 'package:freshtrack/screens/main/main_screen.dart';
-import 'package:freshtrack/services/local_notifications.dart';
+import 'package:freshtrack/services/notificationService.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
 import 'package:get/get.dart';
@@ -18,10 +20,14 @@ import 'package:toastification/toastification.dart';
 void main() async {
   //* Initialize hive
   await Hive.initFlutter();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FirebaseMessaging.onBackgroundMessage(Notificationservice.backgroundHandler);
+  Notificationservice.initialize();
   // ignore: deprecated_member_use
-  CloudinaryContext.cloudinary = await Cloudinary.fromCloudName(cloudName: keySecure.cloudinary_name);
-  await LocalNotifications.init();
+  CloudinaryContext.cloudinary =
+      await Cloudinary.fromCloudName(cloudName: keySecure.cloudinary_name);
   await WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MyApp());

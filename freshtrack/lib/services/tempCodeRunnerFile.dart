@@ -1,1 +1,0 @@
-AndroidInitializationSettings('@mipmap/ic_launcher');
