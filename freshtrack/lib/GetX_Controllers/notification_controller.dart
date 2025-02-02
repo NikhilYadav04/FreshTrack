@@ -10,6 +10,7 @@ class NotificationController extends GetxController {
     setupFirebaseNotifications();
   }
 
+  //* to handle notifications
   void setupFirebaseNotifications() {
     //* When the app is terminated and opened by clicking a notification
     FirebaseMessaging.instance.getInitialMessage().then(
@@ -56,9 +57,15 @@ class NotificationController extends GetxController {
     );
   }
 
+  //* handle navigation based on notification payload ID
   void handleNotificationNavigation(RemoteMessage message) {
     if (message.data['_id'] != null) {
       Get.toNamed('/demo', arguments: {"id": message.data['_id']});
     }
+  }
+
+  //* To Store FCM Tokens In Firestore Database
+  Future<void> storeFCMToken(String token) async{
+   
   }
 }

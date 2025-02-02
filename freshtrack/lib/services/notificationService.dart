@@ -7,6 +7,7 @@ class Notificationservice {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  //* initialize flutter local notifications plugin
   static void initialize() {
     //* Initialization settings for Android
     const InitializationSettings initializationSettings =
@@ -35,6 +36,7 @@ class Notificationservice {
     );
   }
 
+  //* to display notification popup
   static void createanddisplaynotification(RemoteMessage message) async {
     try {
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
