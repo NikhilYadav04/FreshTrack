@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -64,5 +66,32 @@ class Notificationservice {
   static Future<void> backgroundHandler(RemoteMessage message) async {
     print(message.data.toString());
     print(message.notification!.title);
+  }
+
+  //* To Store FCM Tokens In Firestore Database
+  static Future<void> storeFCMToken() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+    final token = await _fcm.getToken();
+    final storeFCMToken = token.toString();
+    final email = FirebaseAuth.instance.currentUser!.email!;
+
+    if (token == null) return;
+
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection("fcm");
+    QuerySnapshot querySnapshot =
+        await collectionReference.where("email", isEqualTo: email).get();
+
+    if (querySnapshot.docs.isEmpty) {
+      await collectionReference.add({
+        "email": email,
+        "ids": [storeFCMToken]
+      });
+    } else {
+      final doc = querySnapshot.docs.first;
+      await doc.reference.update({
+        "ids": FieldValue.arrayUnion([storeFCMToken])
+      });
+    }
   }
 }

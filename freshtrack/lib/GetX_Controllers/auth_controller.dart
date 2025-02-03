@@ -1,11 +1,10 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/auth/success_screen.dart';
+import 'package:freshtrack/services/notificationService.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hive/hive.dart';
@@ -66,7 +65,7 @@ class AuthController extends GetxController {
           numberControllerCreate.text.toString());
 
       isLoadingCreate = false.obs;
-       Get.back();
+      Get.back();
 
       toastMessage(context, "Success!", "Account Created Successfully!",
           ToastificationType.success);
@@ -93,10 +92,9 @@ class AuthController extends GetxController {
         isLoadingCreate = false.obs;
         print(e.toString());
 
-        toastMessage(context, "Error", e.toString(),
-            ToastificationType.error);
+        toastMessage(context, "Error", e.toString(), ToastificationType.error);
 
-       return "Error";
+        return "Error";
       }
     }
   }
@@ -106,11 +104,14 @@ class AuthController extends GetxController {
     try {
       isLoadingLogin = true.obs;
 
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: nameController.text.toString(), password: passwordController.text.toString());
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: nameController.text.toString(),
+              password: passwordController.text.toString());
 
-       if (!Hive.isBoxOpen('freshbox')) {
+      if (!Hive.isBoxOpen('freshbox')) {
         await keySecure.getKey();
-        }
+      }
 
       //* Storing User ID And Email In Hive Storage
       final _myBox = await Hive.box('freshbox');
@@ -119,39 +120,53 @@ class AuthController extends GetxController {
       print(_myBox.get(userCredential.user!.uid));
       await Hive.box('auth').put('status', 'Login');
 
-      isLoadingLogin = false.obs;
-      Get.to(() => SuccessScreen(),transition: Transition.rightToLeft);
+      await Notificationservice.storeFCMToken();
 
-      toastMessage(context,"Success!", "Logged In Successfully", ToastificationType.success);
+      isLoadingLogin = false.obs;
+      Get.to(() => SuccessScreen(), transition: Transition.rightToLeft);
+
+      toastMessage(context, "Success!", "Logged In Successfully",
+          ToastificationType.success);
 
       return "Success";
     } catch (e) {
       isLoadingLogin = false.obs;
-       if(e is FirebaseAuthException){
+      if (e is FirebaseAuthException) {
         switch (e.code) {
-        case 'wrong-password':
-          toastMessage(context,"Error", 'Incorrect password. Please try again.',ToastificationType.error);
-          break;
-        case 'user-not-found':
-          toastMessage(context,"Error" ,'No user found with this email. Please register first.',ToastificationType.error);
-          break;
-        default:
-          toastMessage(context,"Error", 'An unknown error occurred: ${e.message}',ToastificationType.error);
-      }
-      return "Error";
-       }else{
+          case 'wrong-password':
+            toastMessage(
+                context,
+                "Error",
+                'Incorrect password. Please try again.',
+                ToastificationType.error);
+            break;
+          case 'user-not-found':
+            toastMessage(
+                context,
+                "Error",
+                'No user found with this email. Please register first.',
+                ToastificationType.error);
+            break;
+          default:
+            toastMessage(
+                context,
+                "Error",
+                'An unknown error occurred: ${e.message}',
+                ToastificationType.error);
+        }
+        return "Error";
+      } else {
         isLoadingLogin = false.obs;
 
-        toastMessage(context, "Error", e.toString(),
-          ToastificationType.error);
+        toastMessage(context, "Error", e.toString(), ToastificationType.error);
         return "Error";
-       }
+      }
     }
   }
 
   //* logout account function
-  Future<String> logout(BuildContext context) async{
-    try{
+  Future<String> logout(BuildContext context) async {
+    try {
       isLoadingLogout = true.obs;
 
       await FirebaseAuth.instance.signOut();
@@ -160,13 +175,13 @@ class AuthController extends GetxController {
 
       isLoadingLogout = false.obs;
 
-      Get.offAll(()=>LoginScreen(),transition: Transition.upToDown);
+      Get.offAll(() => LoginScreen(), transition: Transition.upToDown);
 
       return "Sucess";
-    }catch(e){
+    } catch (e) {
       isLoadingLogout = false.obs;
 
-       toastMessage(context, "Error", "An unexpected error occurred.",
+      toastMessage(context, "Error", "An unexpected error occurred.",
           ToastificationType.error);
       return "Error";
     }

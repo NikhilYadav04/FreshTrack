@@ -63,9 +63,4 @@ class NotificationController extends GetxController {
       Get.toNamed('/demo', arguments: {"id": message.data['_id']});
     }
   }
-
-  //* To Store FCM Tokens In Firestore Database
-  Future<void> storeFCMToken(String token) async{
-   
-  }
 }
