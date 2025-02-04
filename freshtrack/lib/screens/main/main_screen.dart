@@ -5,6 +5,7 @@ import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/GetX_Controllers/main_screen_controller.dart';
 import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/helper/keySecure.dart';
+import 'package:freshtrack/helper/workManager.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/main/add_item_screen.dart';
 import 'package:freshtrack/screens/main/items_list_screen.dart';
@@ -89,7 +90,10 @@ class _MainScreenState extends State<MainScreen> {
           //     )),
           InkWell(
               onTap: () {
-                Notificationservice.sendNotification();
+                print("Taske xecuted clicekd");
+               // Notificationservice.sendNotification();
+               WorkManager.executeTask();
+               //WorkManager.cancelTask();
               },
               child: Image.asset(
                 Images.Bell,
