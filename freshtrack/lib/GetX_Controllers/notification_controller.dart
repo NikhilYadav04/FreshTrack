@@ -52,6 +52,7 @@ class NotificationController extends GetxController {
           print(message.notification!.title);
           print(message.notification!.body);
           print("message.data22 ${message.data['_id']}");
+          Notificationservice.createanddisplaynotification(message);
         }
       },
     );

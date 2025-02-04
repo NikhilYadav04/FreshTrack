@@ -25,10 +25,10 @@ void main() async {
   );
   FirebaseMessaging.onBackgroundMessage(Notificationservice.backgroundHandler);
   Notificationservice.initialize();
+
   // ignore: deprecated_member_use
   CloudinaryContext.cloudinary =
       await Cloudinary.fromCloudName(cloudName: keySecure.cloudinary_name);
-  keySecure.getServerKey();
   await WidgetsFlutterBinding.ensureInitialized();
 
   runApp(MyApp());

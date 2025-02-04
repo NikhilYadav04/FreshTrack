@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:freshtrack/helper/keySecure.dart';
+import 'package:http/http.dart' as http;
 
 class Notificationservice {
   Notificationservice._();
@@ -92,6 +96,65 @@ class Notificationservice {
       await doc.reference.update({
         "ids": FieldValue.arrayUnion([storeFCMToken])
       });
+    }
+  }
+
+  //* send notification
+  static Future<void> sendNotification() async {
+    try {
+      final email = FirebaseAuth.instance.currentUser!.email!;
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection("fcm");
+
+      // Fetch tokens for the current user's email
+      QuerySnapshot querySnapshot =
+          await collectionReference.where("email", isEqualTo: email).get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No tokens found for email: $email");
+        return;
+      }
+
+      final doc = querySnapshot.docs.first;
+      List<dynamic> fcmTokens = await doc.get('ids');
+
+      final url = Uri.parse(
+          "https://fcm.googleapis.com/v1/projects/${keySecure.project_id}/messages:send");
+
+      var headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${keySecure.server_key}"
+      };
+
+      for (int i = 0; i < fcmTokens.length; i++) {
+        final token = fcmTokens[i];
+        print(token);
+        var body = {
+          "message": {
+            "token": "${token.toString()}",
+            "notification": {
+              "body": "new notification!",
+              "title": "video uplaoded"
+            },
+            "android": {
+              "priority": "high",
+              "notification": {"channel_id": "freshtrack"}
+            }
+          }
+        };
+
+        var response =
+            await http.post(url, headers: headers, body: jsonEncode(body));
+
+        if (response.statusCode == 200) {
+          print("Notification sent to $token");
+        } else {
+          print(
+              "Error sending notification to $token: ${response.statusCode}, ${response.body}");
+        }
+      }
+    } catch (e) {
+      print("Error occurred: $e");
     }
   }
 }

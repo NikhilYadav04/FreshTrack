@@ -11,6 +11,7 @@ import 'package:freshtrack/screens/main/items_list_screen.dart';
 import 'package:freshtrack/screens/notifications/notification_screen.dart';
 import 'package:freshtrack/screens/recipes/saved_recipes.dart';
 import 'package:freshtrack/screens/recipes/search_recipes.dart';
+import 'package:freshtrack/services/notificationService.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -78,9 +79,18 @@ class _MainScreenState extends State<MainScreen> {
               size: 5.47754 * SizeConfig.heightMultiplier,
             ),
           ),
+          //  InkWell(
+          //     onTap: () => Get.to(() => NotificationScreen(),
+          //         transition: Transition.upToDown),
+          //     child: Image.asset(
+          //       Images.Bell,
+          //       height: 4.42417 * SizeConfig.heightMultiplier,
+          //       width: 9.375 * SizeConfig.widthMultiplier,
+          //     )),
           InkWell(
-              onTap: () => Get.to(() => NotificationScreen(),
-                  transition: Transition.upToDown),
+              onTap: () {
+                Notificationservice.sendNotification();
+              },
               child: Image.asset(
                 Images.Bell,
                 height: 4.42417 * SizeConfig.heightMultiplier,
