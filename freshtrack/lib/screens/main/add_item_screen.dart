@@ -146,6 +146,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             await FirebaseAuth.instance.currentUser!.email;
                         searchRecipeController.addItem(
                             _imagefile!, email!, context);
+                        
                       }),
               )
             ],

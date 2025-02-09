@@ -5,14 +5,12 @@ import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/GetX_Controllers/main_screen_controller.dart';
 import 'package:freshtrack/GetX_Controllers/notification_controller.dart';
 import 'package:freshtrack/helper/keySecure.dart';
-import 'package:freshtrack/helper/workManager.dart';
+import 'package:freshtrack/services/workManager.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/main/add_item_screen.dart';
 import 'package:freshtrack/screens/main/items_list_screen.dart';
-import 'package:freshtrack/screens/notifications/notification_screen.dart';
 import 'package:freshtrack/screens/recipes/saved_recipes.dart';
 import 'package:freshtrack/screens/recipes/search_recipes.dart';
-import 'package:freshtrack/services/notificationService.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -28,7 +26,8 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final NotificationController notificationController = Get.put(NotificationController());
+  final NotificationController notificationController =
+      Get.put(NotificationController());
   final MainScreenController mainScreenController =
       Get.put(MainScreenController());
   String name = "";
@@ -91,9 +90,11 @@ class _MainScreenState extends State<MainScreen> {
           InkWell(
               onTap: () {
                 print("Taske xecuted clicekd");
-               // Notificationservice.sendNotification();
-               WorkManager.executeTask();
-               //WorkManager.cancelTask();
+               // Notificationservice.createanddisplaynotificationLocally("Apple","Hi dance");
+                 //Notificationservice.sendNotification();
+                //WorkManager.executeTask();
+                //WorkManager.cancelTask();
+                WorkManager.scheduleNotifyExpiry(20, "APple");
               },
               child: Image.asset(
                 Images.Bell,

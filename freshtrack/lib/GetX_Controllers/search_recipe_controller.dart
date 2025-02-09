@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
+import 'package:freshtrack/services/workManager.dart';
 import 'package:freshtrack/styling/strings.dart';
 import 'package:get/get.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:toastification/toastification.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:intl/intl.dart';
+import 'package:workmanager/workmanager.dart';
 
 class SearchRecipeController extends GetxController {
   //* controllers for adding item and searching
@@ -122,10 +125,16 @@ class SearchRecipeController extends GetxController {
 
         print("Reached here");
 
+        DateTime now = DateTime.now();
+        DateTime targetDate =
+            DateFormat("MMMM d, y").parse(dateController.text.trim());
+        Duration difference = targetDate.difference(now);
+
         List<Map<String, dynamic>> items = [
           {
             "p_name": nameController.text.trim(),
             "e_date": dateController.text.trim(),
+            "remaining_hours": difference.inHours.toString(),
             "imageURL": url,
           }
         ];
@@ -141,6 +150,10 @@ class SearchRecipeController extends GetxController {
             "items": items,
           });
         }
+
+        //* After adding items schedule workmanager task for showing notifications
+        WorkManager.scheduleNotifyExpiry(
+            difference.inHours, nameController.text.trim());
 
         toastMessage(context, "Success", "Item Added Successfully",
             ToastificationType.success);
@@ -229,10 +242,8 @@ class SearchRecipeController extends GetxController {
       filtered.value = itemList;
     } else {
       filtered.value = itemList
-          .where((item) => item
-              .toString()
-              .toLowerCase()
-              .contains(keyword.toLowerCase()))
+          .where((item) =>
+              item.toString().toLowerCase().contains(keyword.toLowerCase()))
           .toList();
     }
   }

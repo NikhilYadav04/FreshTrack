@@ -1,5 +1,9 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudinary_flutter/cloudinary_context.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
-import 'package:freshtrack/helper/workManager.dart';
+import 'package:freshtrack/services/workManager.dart';
 import 'package:freshtrack/screens/home/Homescreen.dart';
 import 'package:freshtrack/screens/main/main_screen.dart';
 import 'package:freshtrack/services/notificationService.dart';
@@ -16,8 +20,69 @@ import 'package:freshtrack/styling/sizeConfig.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toastification/toastification.dart';
 import 'package:workmanager/workmanager.dart';
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  WidgetsFlutterBinding
+      .ensureInitialized(); //* Ensure Flutter engine is initialized
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case "simple":
+        var logger = Logger();
+        debugPrint("Item is  and is running in backgorund");
+        logger.d("Item is  and is running in backgorund");
+        break;
+      case "notify":
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+
+        Notificationservice.initialize();
+        var logger = Logger();
+
+        final prefs = await SharedPreferences.getInstance();
+        int attempt = prefs.getInt('attempt') ?? 0;
+
+        if (attempt == 2) {
+          //* Reset attempt and cancel the task
+          await prefs.setInt('attempt', 0);
+          await Workmanager().cancelByUniqueName('notify');
+        } else {
+          //* Send Notification
+          logger.d("Attempt ${attempt}");
+          Notificationservice.createanddisplaynotificationLocally(
+              "Mango", "Let's make");
+          await prefs.setInt('attempt', attempt + 1);
+        }
+        //* cannot run fcm cloud server function to send notification because of free plan
+        break;
+      default:
+        logger.d("Unknown background task: $task");
+        debugPrint("Unknown background task: $task");
+    }
+    return Future.value(true);
+  });
+}
+
+// await Hive.openBox('tasks');
+// final _myBox = Hive.box('tasks');
+
+// int attempt = _myBox.get('attempt', defaultValue: 0);
+
+// if (attempt == 2) {
+//   //* Reset attempt and cancel the task
+//   _myBox.put('attempt', 0);
+//   await Workmanager().cancelByUniqueName('notify');
+// } else {
+//   //* Send Notification
+//   Notificationservice.createanddisplaynotificationLocally(
+//       "Mango", "Lets make");
+//   _myBox.put('attempt', attempt + 1);
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +96,7 @@ void main() async {
   );
 
   //* Initialize Workmanager in background
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   //* Notification Service Initialize
   FirebaseMessaging.onBackgroundMessage(Notificationservice.backgroundHandler);
@@ -42,21 +107,6 @@ void main() async {
       await Cloudinary.fromCloudName(cloudName: keySecure.cloudinary_name);
 
   runApp(MyApp());
-}
-
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    switch (task) {
-      case "simple":
-        logger.d("Hii this background task EXEEEEEEEECUTED");
-        debugPrint("Task Excuted HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
-        break;
-      default:
-        logger.d("Unknown background task: $task");
-        debugPrint("Unknown background task: $task");
-    }
-    return Future.value(true);
-  });
 }
 
 class MyApp extends StatelessWidget {

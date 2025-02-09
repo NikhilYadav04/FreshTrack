@@ -67,6 +67,32 @@ class Notificationservice {
     }
   }
 
+  static void createanddisplaynotificationLocally(
+      String title, String body) async {
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: AndroidNotificationDetails(
+            "freshtrack", "pushnotificationappchannel",
+            importance: Importance.max,
+            priority: Priority.high,
+            // largeIcon: FilePathAndroidBitmap('assets/bell.png')
+            largeIcon: DrawableResourceAndroidBitmap("@mipmap/ic_launcher")),
+      );
+
+      await _notificationsPlugin.show(
+        id,
+        title,
+        body,
+        notificationDetails,
+        payload: "",
+        //* default payload :- message.data['_id']
+      );
+    } on Exception catch (e) {
+      print(e);
+    }
+  }
+
   static Future<void> backgroundHandler(RemoteMessage message) async {
     print(message.data.toString());
     print(message.notification!.title);
@@ -100,8 +126,9 @@ class Notificationservice {
   }
 
   //* send notification
-  static Future<void> sendNotification() async {
+  static Future<void> sendNotification(String item) async {
     try {
+      print("Notifications rvic started");
       final email = FirebaseAuth.instance.currentUser!.email!;
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection("fcm");
@@ -133,8 +160,8 @@ class Notificationservice {
           "message": {
             "token": "${token.toString()}",
             "notification": {
-              "body": "new notification!",
-              "title": "video uplaoded"
+              "body": "Let's Make Some Dishes With ${item} !!",
+              "title": "Hey, ${item} is about to get expired!"
             },
             "android": {
               "priority": "high",
@@ -142,6 +169,8 @@ class Notificationservice {
             }
           }
         };
+
+        print("Notifications rvic ended");
 
         var response =
             await http.post(url, headers: headers, body: jsonEncode(body));
