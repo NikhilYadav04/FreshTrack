@@ -14,6 +14,7 @@ import 'package:freshtrack/screens/recipes/search_recipes.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -95,6 +96,7 @@ class _MainScreenState extends State<MainScreen> {
                 //WorkManager.executeTask();
                 //WorkManager.cancelTask();
                 WorkManager.scheduleNotifyExpiry(20, "APple");
+                //toastErrorSlide(context, "You have clicked toast to test");
               },
               child: Image.asset(
                 Images.Bell,
@@ -128,30 +130,33 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       bottomNavigationBar: Obx(
-        () => CurvedNavigationBar(
-            height: 7.16294 * SizeConfig.heightMultiplier,
-            buttonBackgroundColor: Colours.Green,
-            backgroundColor: Colors.white,
-            color: Colours.Green,
-            onTap: (value) => mainScreenController.index.value = value,
-            index: mainScreenController.index.value,
-            items: [
-              Icon(
-                Icons.search,
-                size: 4.213497 * SizeConfig.heightMultiplier,
-                color: Colors.white,
-              ),
-              Icon(
-                Icons.shopping_cart,
-                size: 4.213497 * SizeConfig.heightMultiplier,
-                color: Colors.white,
-              ),
-              Icon(
-                Icons.soup_kitchen_sharp,
-                size: 4.213497 * SizeConfig.heightMultiplier,
-                color: Colors.white,
-              ),
-            ]),
+        () => AnimatedContainer(
+          duration: Duration(milliseconds: 500),
+          child: CurvedNavigationBar(
+              height:  7.16294 * SizeConfig.heightMultiplier ,
+              buttonBackgroundColor: Colours.Green,
+              backgroundColor: Colors.white,
+              color: Colours.Green,
+              onTap: (value) => mainScreenController.index.value = value,
+              index: mainScreenController.index.value,
+              items: [
+                Icon(
+                  Icons.search,
+                  size: 4.213497 * SizeConfig.heightMultiplier,
+                  color: Colors.white,
+                ),
+                Icon(
+                  Icons.shopping_cart,
+                  size: 4.213497 * SizeConfig.heightMultiplier,
+                  color: Colors.white,
+                ),
+                Icon(
+                  Icons.soup_kitchen_sharp,
+                  size: 4.213497 * SizeConfig.heightMultiplier,
+                  color: Colors.white,
+                ),
+              ]),
+        ),
       ),
     ));
   }

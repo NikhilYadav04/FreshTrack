@@ -1,13 +1,8 @@
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudinary_flutter/cloudinary_context.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
@@ -33,8 +28,8 @@ void callbackDispatcher() {
     switch (task) {
       case "simple":
         var logger = Logger();
-        debugPrint("Item is  and is running in backgorund");
-        logger.d("Item is  and is running in backgorund");
+        debugPrint("Item is  and is running in background");
+        logger.d("Item is  and is running in background");
         break;
       case "notify":
         await Firebase.initializeApp(
@@ -50,15 +45,17 @@ void callbackDispatcher() {
         if (attempt == 2) {
           //* Reset attempt and cancel the task
           await prefs.setInt('attempt', 0);
+          logger.d("Attempt after ending ${attempt}");
           await Workmanager().cancelByUniqueName('notify');
         } else {
           //* Send Notification
-          logger.d("Attempt ${attempt}");
+          
           Notificationservice.createanddisplaynotificationLocally(
               "Mango", "Let's make");
           await prefs.setInt('attempt', attempt + 1);
+          logger.d("Attempt ${attempt}");
         }
-        //* cannot run fcm cloud server function to send notification because of free plan
+        //! cannot run fcm cloud server function to send notification because of free plan
         break;
       default:
         logger.d("Unknown background task: $task");

@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:freshtrack/helper/toastMessage.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
-import 'package:toastification/toastification.dart';
 
 class SavedRecipeController extends GetxController {
   //* controller for searching
@@ -37,8 +36,7 @@ class SavedRecipeController extends GetxController {
 
       List<dynamic> list = querySnapshot.docs.first["recipes"];
       if (list.length >= 10) {
-        toastMessage(context, "Limit Exceeded", "Only 10 recipes can be saved",
-            ToastificationType.warning);
+        toastErrorSlide(context, "Only 10 recipes can be saved");
         return "Limit Exceeded";
       } else {
         //* add saved recipe in a list to check if it is saved
@@ -50,13 +48,11 @@ class SavedRecipeController extends GetxController {
           await collectionReference
               .doc(docID)
               .update({"recipes": FieldValue.arrayUnion(recipe)});
-          toastMessage(context, "Saved", "Recipe Saved Successfully!",
-              ToastificationType.success);
+          toastSuccessSlide(context, "Recipe Saved Successfully!");
           return "Success";
         } else {
           await collectionReference.add(recipe);
-          toastMessage(context, "Saved", "Recipe Saved Successfully!",
-              ToastificationType.success);
+          toastSuccessSlide(context, "Recipe Saved Successfully!");
           return "Success";
         }
       }
@@ -120,8 +116,7 @@ class SavedRecipeController extends GetxController {
 
       await documentReference.update({"recipes": recipes});
 
-      toastMessage(context, "Deleted", "Recipe Deleted Successfully",
-          ToastificationType.success);
+      toastSuccessSlide(context, "Recipe Deleted Successfully");
     } catch (e) {
       print(e.toString());
     }

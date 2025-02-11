@@ -5,6 +5,7 @@ import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/auth/success_screen.dart';
 import 'package:freshtrack/services/notificationService.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hive/hive.dart';
@@ -67,8 +68,7 @@ class AuthController extends GetxController {
       isLoadingCreate = false.obs;
       Get.back();
 
-      toastMessage(context, "Success!", "Account Created Successfully!",
-          ToastificationType.success);
+      toastSuccessSlide(context, "Account Created Successfully!!");
       return "Success";
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -76,12 +76,10 @@ class AuthController extends GetxController {
 
         switch (e.code) {
           case 'email-already-in-use':
-            toastMessage(context, "Error", "Email is already registered.",
-                ToastificationType.error);
+            toastErrorSlide(context, "Email is already registered.");
             break;
           case 'weak-password':
-            toastMessage(context, "Error", "Password is too weak.",
-                ToastificationType.error);
+            toastErrorSlide(context, "Email is already registered.");
             break;
           default:
             toastMessage(context, "Error", e.message ?? "An error occurred.",
@@ -120,13 +118,13 @@ class AuthController extends GetxController {
       print(_myBox.get(userCredential.user!.uid));
       await Hive.box('auth').put('status', 'Login');
 
-      await Notificationservice.storeFCMToken();
+       //* store fcm token of each device for notification
+      //await Notificationservice.storeFCMToken();
 
       isLoadingLogin = false.obs;
       Get.to(() => SuccessScreen(), transition: Transition.rightToLeft);
 
-      toastMessage(context, "Success!", "Logged In Successfully",
-          ToastificationType.success);
+      toastSuccessSlide(context, "Logged In Successfully!!");
 
       return "Success";
     } catch (e) {
@@ -134,25 +132,14 @@ class AuthController extends GetxController {
       if (e is FirebaseAuthException) {
         switch (e.code) {
           case 'wrong-password':
-            toastMessage(
-                context,
-                "Error",
-                'Incorrect password. Please try again.',
-                ToastificationType.error);
+            toastErrorSlide(context, 'Incorrect password. Please try again.');
             break;
           case 'user-not-found':
-            toastMessage(
-                context,
-                "Error",
-                'No user found with this email. Please register first.',
-                ToastificationType.error);
+            toastErrorSlide(context,
+                'No user found with this email. Please register first.');
             break;
           default:
-            toastMessage(
-                context,
-                "Error",
-                'An unknown error occurred: ${e.message}',
-                ToastificationType.error);
+            toastErrorSlide(context, 'An unknown error occurred: ${e.message}');
         }
         return "Error";
       } else {
@@ -181,8 +168,7 @@ class AuthController extends GetxController {
     } catch (e) {
       isLoadingLogout = false.obs;
 
-      toastMessage(context, "Error", "An unexpected error occurred.",
-          ToastificationType.error);
+      toastErrorSlide(context, "An unexpected error occurred.");
       return "Error";
     }
   }

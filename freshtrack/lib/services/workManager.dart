@@ -1,10 +1,5 @@
-import 'dart:ffi';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/services/notificationService.dart';
 import 'package:logger/logger.dart';
 import 'package:workmanager/workmanager.dart';
@@ -57,8 +52,6 @@ class WorkManager {
   //* 1] Schedule the Workmanager Task
   static void scheduleNotifyExpiry(int hours, String item) async {
     var uniqueID = DateTime.now().second.toString();
-    // Workmanager().registerOneOffTask(uniqueID, "notify",
-    //     inputData: {"item": item}, initialDelay: Duration(seconds: 10));
     Workmanager().registerPeriodicTask(uniqueID, "notify",
         inputData: {"item": item}, initialDelay: Duration(seconds: 10),frequency: Duration(minutes: 15));
   }

@@ -9,13 +9,13 @@ import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/services/workManager.dart';
 import 'package:freshtrack/styling/strings.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:toastification/toastification.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
-import 'package:workmanager/workmanager.dart';
 
 class SearchRecipeController extends GetxController {
   //* controllers for adding item and searching
@@ -110,16 +110,14 @@ class SearchRecipeController extends GetxController {
       List<dynamic> list = querySnapshot.docs.first["items"];
 
       if (list.length >= 10) {
-        toastMessage(context, "Limit Exceeded",
-            "You can add only 10 Items in List", ToastificationType.warning);
+        toastErrorSlide(context, "You can add only 10 Items in List");
         isLoadingUpload.value = false;
       } else {
         final url = await addImage(image, context);
 
         if (url.isEmpty) {
           isLoadingUpload.value = false;
-          toastMessage(context, "Error", "Image upload failed",
-              ToastificationType.error);
+          toastErrorSlide(context, "Image upload failed");
           return 'Image Upload Failed';
         }
 
@@ -155,16 +153,14 @@ class SearchRecipeController extends GetxController {
         WorkManager.scheduleNotifyExpiry(
             difference.inHours, nameController.text.trim());
 
-        toastMessage(context, "Success", "Item Added Successfully",
-            ToastificationType.success);
+        toastSuccessSlide(context, "Item Added Successfully");
         isLoadingUpload.value = false;
       }
 
       return 'Success';
     } catch (e) {
       isLoadingUpload.value = false;
-      toastMessage(
-          context, "Error", "Failed to add item: $e", ToastificationType.error);
+      toastErrorSlide(context,  "Failed to add item: $e");
       return 'Failed';
     }
   }
@@ -302,8 +298,7 @@ class SearchRecipeController extends GetxController {
 
         return list;
       } else {
-        toastMessage(context, "Empty Items List!", "No Food Items Provided",
-            ToastificationType.warning);
+        toastErrorSlide(context, "No Food Items Provided !!");
         isLoading.value = false;
         return [];
       }

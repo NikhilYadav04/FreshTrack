@@ -65,6 +65,7 @@ dependencies:
   workmanager: ^0.5.2
   logger: ^2.5.0
   shared_preferences: ^2.3.3
+  flutter_sliding_toast: ^1.4.3
 
 
 dev_dependencies:
