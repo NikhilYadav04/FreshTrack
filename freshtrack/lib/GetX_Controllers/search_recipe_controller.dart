@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -13,7 +14,6 @@ import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:toastification/toastification.dart';
-import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 
@@ -36,6 +36,7 @@ class SearchRecipeController extends GetxController {
   RxBool isLoading = false.obs;
 
   //* add image in cloudinary
+
   Future<String> addImage(File image, BuildContext context) async {
     if (image.path.isEmpty) {
       toastMessage(context, "Image Error!", "Invalid image path",
@@ -43,49 +44,70 @@ class SearchRecipeController extends GetxController {
       return '';
     }
 
-    final url = Uri.parse(
-        'https://api.cloudinary.com/v1_1/${keySecure.cloudinary_name}/upload');
+    final String cloudinaryUrl =
+        'https://api.cloudinary.com/v1_1/${keySecure.cloudinary_name}/upload';
 
     try {
       final compressedImageBytes = await compressAndResizeImage(image);
+      if (compressedImageBytes == null) {
+        toastMessage(context, "Image Error!", "Image compression failed",
+            ToastificationType.error);
+        return '';
+      }
 
-      final request = http.MultipartRequest('POST', url)
-        ..fields['upload_preset'] = 'e_items'
-        ..files.add(await http.MultipartFile.fromBytes(
-            'file', compressedImageBytes!,
-            filename: "compressed.jpg"));
+      dio.Dio dioInstance = dio.Dio();
 
-      print("Hello");
+      dio.FormData formData = dio.FormData.fromMap({
+        'upload_preset': 'e_items',
+        'file': dio.MultipartFile.fromBytes(compressedImageBytes,
+            filename: "compressed.jpg"),
+      });
 
-      final response = await request.send().timeout(Duration(seconds: 20));
+      dio.Response response = await dioInstance.post(
+        cloudinaryUrl,
+        data: formData,
+        options: dio.Options(
+          sendTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
+        ),
+      );
 
-      if (response.statusCode == 200) {
-        final responseData = await response.stream.toBytes();
-        final responseString = String.fromCharCodes(responseData);
-        final jsonMap = jsonDecode(responseString);
-
-        print("End");
+      if (response.statusCode == 200 && response.data != null) {
+        final jsonMap = response.data;
 
         if (jsonMap['url'] != null) {
           return jsonMap['url'];
-        } else {
-          return '';
         }
-      } else {
-        final errorResponseData = await response.stream.toBytes();
-        final errorResponseString = String.fromCharCodes(errorResponseData);
-        print(
-            "Failed with status: ${response.statusCode}\nResponse: $errorResponseString");
-        toastMessage(
-          context,
-          "Image Error!",
-          "Failed with status: ${response.statusCode}\nResponse: $errorResponseString",
-          ToastificationType.error,
-        );
-        return '';
       }
+
+      toastMessage(
+        context,
+        "Image Error!",
+        "Failed with status: ${response.statusCode}\nResponse: ${jsonEncode(response.data)}",
+        ToastificationType.error,
+      );
+      return '';
+    } on dio.DioException catch (e) {
+      String errorMessage = "An error occurred";
+
+      if (e.type == dio.DioExceptionType.connectionTimeout ||
+          e.type == dio.DioExceptionType.receiveTimeout) {
+        errorMessage = "Connection timed out!";
+      } else if (e.response != null) {
+        errorMessage =
+            "Failed with status: ${e.response?.statusCode}\nResponse: ${jsonEncode(e.response?.data)}";
+      } else {
+        errorMessage = e.message ?? "Unexpected error";
+      }
+
+      toastMessage(
+        context,
+        "Image Error!",
+        errorMessage,
+        ToastificationType.error,
+      );
+      return '';
     } catch (e) {
-      print(e.toString());
       toastMessage(
         context,
         "Image Error!",
@@ -160,7 +182,7 @@ class SearchRecipeController extends GetxController {
       return 'Success';
     } catch (e) {
       isLoadingUpload.value = false;
-      toastErrorSlide(context,  "Failed to add item: $e");
+      toastErrorSlide(context, "Failed to add item: $e");
       return 'Failed';
     }
   }
@@ -296,6 +318,10 @@ class SearchRecipeController extends GetxController {
 
         isLoading.value = false;
 
+        if (list.isEmpty) {
+          toastErrorSlide(context, "Please Try Again !!");
+        }
+
         return list;
       } else {
         toastErrorSlide(context, "No Food Items Provided !!");
@@ -313,17 +339,26 @@ class SearchRecipeController extends GetxController {
   Future<String> getImageRecipe(String title) async {
     try {
       final recipe = title.split(" ")[2];
-      final Url = Uri.parse(
-          "https://api.spoonacular.com/recipes/complexSearch?query=$recipe&number=2&apiKey=${keySecure.spoonacular_key}");
+      final dio.Dio dioInstance = dio.Dio();
 
-      final response = await http.get(Url);
+      //* Set the timeout to 6=5 seconds
+      dioInstance.options.connectTimeout = Duration(seconds: 4);
+      dioInstance.options.receiveTimeout = Duration(seconds: 4);
 
-      final responseBody = jsonDecode(response.body);
+      final url =
+          "https://api.spoonacular.com/recipes/complexSearch?query=$recipe&number=2&apiKey=${keySecure.spoonacular_key}";
+
+      final response = await dioInstance.get(url);
+
+      final responseBody = jsonDecode(response.toString());
       final imageURL = responseBody["results"][0]["image"];
 
       return imageURL;
-    } catch (e) {
-      print(e.toString());
+    } on dio.DioException catch (e) {
+      if (e.type == dio.DioExceptionType.sendTimeout ||
+          e.type == dio.DioExceptionType.receiveTimeout) {
+        return "Request Timed Out, Please Try Again";
+      }
       return "";
     }
   }

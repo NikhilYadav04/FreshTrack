@@ -49,7 +49,7 @@ void callbackDispatcher() {
           await Workmanager().cancelByUniqueName('notify');
         } else {
           //* Send Notification
-          
+
           Notificationservice.createanddisplaynotificationLocally(
               "Mango", "Let's make");
           await prefs.setInt('attempt', attempt + 1);
@@ -64,22 +64,6 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
-
-// await Hive.openBox('tasks');
-// final _myBox = Hive.box('tasks');
-
-// int attempt = _myBox.get('attempt', defaultValue: 0);
-
-// if (attempt == 2) {
-//   //* Reset attempt and cancel the task
-//   _myBox.put('attempt', 0);
-//   await Workmanager().cancelByUniqueName('notify');
-// } else {
-//   //* Send Notification
-//   Notificationservice.createanddisplaynotificationLocally(
-//       "Mango", "Lets make");
-//   _myBox.put('attempt', attempt + 1);
-// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
