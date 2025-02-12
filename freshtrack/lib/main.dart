@@ -3,6 +3,7 @@ import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:freshtrack/firebase_options.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
@@ -71,10 +72,14 @@ void main() async {
   //* Initialize hive
   await Hive.initFlutter();
 
+  //* dotenv Initialize
+  await dotenv.load();
+
   //* Initialize firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
 
   //* Initialize Workmanager in background
   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);

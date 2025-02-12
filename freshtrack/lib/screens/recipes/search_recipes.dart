@@ -5,6 +5,7 @@ import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/recipes/gemini_recipes.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:freshtrack/widgets/main_widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
@@ -148,6 +149,8 @@ class SearchRecipesScreen extends StatelessWidget {
                                   recipes: list,
                                 ),
                             transition: Transition.fade);
+                      }else{
+                        toastErrorSlide(context, "Please Try Again !!");
                       }
                     })),
           )
