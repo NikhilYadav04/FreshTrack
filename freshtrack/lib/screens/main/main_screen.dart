@@ -14,7 +14,6 @@ import 'package:freshtrack/screens/recipes/search_recipes.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
-import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -94,8 +93,8 @@ class _MainScreenState extends State<MainScreen> {
                // Notificationservice.createanddisplaynotificationLocally("Apple","Hi dance");
                  //Notificationservice.sendNotification();
                 //WorkManager.executeTask();
-                //WorkManager.cancelTask();
-                WorkManager.scheduleNotifyExpiry(20, "APple");
+                WorkManager.cancelTask();
+                //WorkManager.scheduleNotifyExpiry(1, "Mango");
                 //toastErrorSlide(context, "You have clicked toast to test");
               },
               child: Image.asset(

@@ -1,15 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
 import 'package:freshtrack/screens/auth/success_screen.dart';
-import 'package:freshtrack/services/notificationService.dart';
 import 'package:freshtrack/styling/toast.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:toastification/toastification.dart';
+import 'package:workmanager/workmanager.dart';
 
 class AuthController extends GetxController {
   //* Login controllers
@@ -22,6 +23,15 @@ class AuthController extends GetxController {
   final TextEditingController passwordControllerCreate =
       TextEditingController();
 
+  //* Forgot PassControllers
+  final TextEditingController forgotEmailController = TextEditingController();
+  final TextEditingController forgotCodeController = TextEditingController();
+
+  final TextEditingController changePasswordController =
+      TextEditingController();
+  final TextEditingController changePasswordControllerVerify =
+      TextEditingController();
+
   //* key
   final GlobalKey<FormState> keyName = GlobalKey<FormState>();
   final GlobalKey<FormState> keyPassword = GlobalKey<FormState>();
@@ -30,18 +40,31 @@ class AuthController extends GetxController {
   final GlobalKey<FormState> phoneCreate = GlobalKey<FormState>();
   final GlobalKey<FormState> keyPasswordCreate = GlobalKey<FormState>();
 
+  final GlobalKey<FormState> forgotEmailKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> forgotCodeKey = GlobalKey<FormState>();
+
+  final GlobalKey<FormState> changePasswordKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> changePasswordVerifyKey = GlobalKey<FormState>();
+
   //* bool for obscure
   RxBool isVisibleLogin = true.obs;
   RxBool isVisibleCreate = true.obs;
+  RxBool isVisibleChange = true.obs;
+  RxBool isVisibleChangeVerify = true.obs;
 
   //* loaders
   RxBool isLoadingCreate = false.obs;
   RxBool isLoadingLogin = false.obs;
   RxBool isLoadingLogout = false.obs;
+  RxBool isLoadingForgotEmail = false.obs;
+  RxBool isLoadingForgotCode = false.obs;
+  RxBool isLoadingChangePassword = false.obs;
 
   void toggleStateLogin() {
     isVisibleLogin.value = !isVisibleLogin.value;
     isVisibleCreate.value = !isVisibleCreate.value;
+    isVisibleChange.value = !isVisibleChange.value;
+    isVisibleChangeVerify.value = !isVisibleChangeVerify.value;
   }
 
   //* Functions
@@ -118,7 +141,7 @@ class AuthController extends GetxController {
       print(_myBox.get(userCredential.user!.uid));
       await Hive.box('auth').put('status', 'Login');
 
-       //* store fcm token of each device for notification
+      //* store fcm token of each device for notification
       //await Notificationservice.storeFCMToken();
 
       isLoadingLogin = false.obs;
@@ -159,6 +182,7 @@ class AuthController extends GetxController {
       await FirebaseAuth.instance.signOut();
       await keySecure.clearKey();
       await Hive.box('auth').put('status', 'Logout');
+      await Workmanager().cancelAll();
 
       isLoadingLogout = false.obs;
 
@@ -170,6 +194,83 @@ class AuthController extends GetxController {
 
       toastErrorSlide(context, "An unexpected error occurred.");
       return "Error";
+    }
+  }
+
+  //* change password via email link
+  Future<void> sendPasswordResetEmail(
+      BuildContext context) async {
+    try {
+      isLoadingForgotEmail.value = true;
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: forgotEmailController.text.toString());
+      toastSuccessSlide(context, 'Password reset link sent to ${forgotEmailController.text.toString()}');
+      isLoadingForgotEmail.value = false;
+    } catch (e) {
+      toastErrorSlide(context, 'Error: ${e.toString()}');
+      isLoadingForgotEmail.value = false;
+    }
+  }
+
+  //* send code to email
+  Future<void> sendCode(BuildContext context, String email) async {
+    try {
+      isLoadingForgotEmail.value = true;
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection('codes');
+      QuerySnapshot querySnapshot =
+          await collectionReference.where('email', isEqualTo: email).get();
+
+      final code = "";
+
+      if (querySnapshot.docs.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+        await documentSnapshot.reference.update({'code': code});
+      } else {
+        await collectionReference.add({"email": email, "code": code});
+      }
+
+      toastSuccessSlide(context, "Code Sent To Your Email");
+
+      isLoadingForgotEmail.value = false;
+    } catch (e) {
+      toastErrorSlide(context, "Error : ${e.toString()}");
+      isLoadingForgotEmail.value = false;
+    }
+  }
+
+  //* verify code
+  Future<String> verifyCode(BuildContext context, String code) async {
+    try {
+      isLoadingForgotCode.value = true;
+      final email = await FirebaseAuth.instance.currentUser!.email!;
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('codes')
+          .where('email', isEqualTo: email)
+          .get();
+      final sentCode = querySnapshot.docs.first.get('code').toString();
+
+      if (sentCode == code) {
+        toastSuccessSlide(context, "Code Verified Successfully !");
+        isLoadingForgotCode.value = false;
+        return "Success";
+      } else {
+        toastErrorSlide(context, "Incorrect Code Entered !");
+        isLoadingForgotCode.value = false;
+        return "Error Verifying";
+      }
+    } catch (e) {
+      toastErrorSlide(context, "Error : ${e.toString()}");
+      isLoadingForgotCode.value = false;
+    }
+    return "";
+  }
+
+  //* change password
+  Future<String> changePassword(String password) async {
+    try {
+      return "";
+    } catch (e) {
+      return "Error : ${e.toString()}";
     }
   }
 }

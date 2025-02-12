@@ -50,10 +50,10 @@ class WorkManager {
   //* notification logic for expiry items
 
   //* 1] Schedule the Workmanager Task
-  static void scheduleNotifyExpiry(int hours, String item) async {
+  static void scheduleNotifyExpiry(int minutes, String item) async {
     var uniqueID = DateTime.now().second.toString();
-    Workmanager().registerPeriodicTask(uniqueID, "notify",
-        inputData: {"item": item}, initialDelay: Duration(seconds: 10),frequency: Duration(minutes: 15));
+    Workmanager().registerOneOffTask(uniqueID, "notify",
+        inputData: {"item": item}, initialDelay: Duration(minutes: minutes));
   }
 
   //* 2] Function to display notifications

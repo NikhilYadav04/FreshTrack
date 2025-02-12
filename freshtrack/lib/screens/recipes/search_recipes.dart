@@ -9,6 +9,7 @@ import 'package:freshtrack/styling/toast.dart';
 import 'package:freshtrack/widgets/main_widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:lottie/lottie.dart';
 
 // ignore: must_be_immutable
 class SearchRecipesScreen extends StatelessWidget {
@@ -52,78 +53,68 @@ class SearchRecipesScreen extends StatelessWidget {
               stream: searchRecipeController
                   .fetchList(searchRecipeController.getEmail()!),
               builder: (context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Colours.Green,
-                    ),
-                  );
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Image.asset("assets/main/item.png"));
                 } else {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: Text("No Items Available"),
-                    );
-                  } else {
-                    final doc = snapshot.data!.docs.first;
-                    final items = doc["items"];
-                    searchRecipeController.itemList.value =
-                        DateTimeFormatter.findExpiry(items);
-                    searchRecipeController.filtered.value =
-                        DateTimeFormatter.findExpiry(items);
-                    List<dynamic> itemList = searchRecipeController.filtered;
-                    return Obx(
-                      () => ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: itemList.length,
-                          itemBuilder: (context, index) {
-                            return Obx(
-                              () => Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      searchRecipeController.checkList
-                                          .add(itemList[index]);
-                                    },
-                                    child: CheckboxListTile(
-                                      activeColor: Colours.Green,
-                                      value: searchRecipeController.checkList
-                                          .contains(itemList[index]),
-                                      title: Text(
-                                        itemList[index],
-                                        style: style.copyWith(
-                                          fontSize: 3.054788 *
-                                              SizeConfig.heightMultiplier,
-                                          fontFamily: "Poppins",
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                  final doc = snapshot.data!.docs.first;
+                  final items = doc["items"];
+                  searchRecipeController.itemList.value =
+                      DateTimeFormatter.findExpiry(items);
+                  searchRecipeController.filtered.value =
+                      DateTimeFormatter.findExpiry(items);
+                  List<dynamic> itemList = searchRecipeController.filtered;
+                  return Obx(
+                    () => ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: itemList.length,
+                        itemBuilder: (context, index) {
+                          return Obx(
+                            () => Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    searchRecipeController.checkList
+                                        .add(itemList[index]);
+                                  },
+                                  child: CheckboxListTile(
+                                    activeColor: Colours.Green,
+                                    value: searchRecipeController.checkList
+                                        .contains(itemList[index]),
+                                    title: Text(
+                                      itemList[index],
+                                      style: style.copyWith(
+                                        fontSize: 3.054788 *
+                                            SizeConfig.heightMultiplier,
+                                        fontFamily: "Poppins",
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      onChanged: (bool? value) {
-                                        if (value == true) {
-                                          //* Add the item if it is checked
-                                          if (!searchRecipeController.checkList
-                                              .contains(itemList[index])) {
-                                            searchRecipeController.checkList
-                                                .add(itemList[index]);
-                                          }
-                                        } else {
-                                          //* Remove the item if it is unchecked
-                                          searchRecipeController.checkList
-                                              .remove(itemList[index]);
-                                        }
-                                      },
                                     ),
+                                    onChanged: (bool? value) {
+                                      if (value == true) {
+                                        //* Add the item if it is checked
+                                        if (!searchRecipeController.checkList
+                                            .contains(itemList[index])) {
+                                          searchRecipeController.checkList
+                                              .add(itemList[index]);
+                                        }
+                                      } else {
+                                        //* Remove the item if it is unchecked
+                                        searchRecipeController.checkList
+                                            .remove(itemList[index]);
+                                      }
+                                    },
                                   ),
-                                  SizedBox(
-                                    height: 1.053 * SizeConfig.heightMultiplier,
-                                  )
-                                ],
-                              ),
-                            );
-                          }),
-                    );
-                  }
+                                ),
+                                SizedBox(
+                                  height: 1.053 * SizeConfig.heightMultiplier,
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                  );
                 }
               }),
           SizedBox(
@@ -132,16 +123,32 @@ class SearchRecipesScreen extends StatelessWidget {
           Obx(
             () => searchRecipeController.isLoading.value
                 ? Center(
-                    child: CircularProgressIndicator(
-                      color: Colours.Green,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colours.Green,
+                      ),
                     ),
                   )
                 : Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: 3.125 * SizeConfig.widthMultiplier),
                     child: mainButton("Search AI Recipes", () async {
+                      Get.dialog(AlertDialog(
+                        backgroundColor: Colors.transparent,
+                        actions: [
+                          Center(
+                            child: Lottie.asset("assets/animation/food.json"),
+                          )
+                        ],
+                      ));
+
                       final List<Map<String, String>> list =
                           await searchRecipeController.geminiCallAPI(context);
+
+                      if (Get.isDialogOpen == true) {
+                        Navigator.of(context).pop();
+                      }
+
                       print(list);
                       if (list.isNotEmpty) {
                         Get.to(
@@ -149,11 +156,12 @@ class SearchRecipesScreen extends StatelessWidget {
                                   recipes: list,
                                 ),
                             transition: Transition.fade);
-                      }else{
+                      } else {
                         toastErrorSlide(context, "Please Try Again !!");
                       }
                     })),
-          )
+          ),
+          SizedBox(height: 35,)
         ],
       ),
     );

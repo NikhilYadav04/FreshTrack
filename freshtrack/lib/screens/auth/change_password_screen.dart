@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
-import 'package:freshtrack/screens/auth/signup_screen.dart';
-import 'package:freshtrack/screens/auth/verify_code_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:freshtrack/widgets/auth_widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-class ForgotPassScreen extends StatelessWidget {
-  ForgotPassScreen({super.key});
+class ChangePasswordScreen extends StatelessWidget {
   final AuthController authController = Get.put(AuthController());
+  ChangePasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +54,13 @@ class ForgotPassScreen extends StatelessWidget {
                 width: 32.3660 * SizeConfig.widthMultiplier,
               )),
               Text(
-                "Forgot Password?",
+                "Change Your Password",
                 style: style.copyWith(
                     color: Colours.Green,
                     fontSize: 4.00282 * SizeConfig.heightMultiplier),
               ),
               Text(
-                "Enter your email here",
+                "Enter your new password here",
                 style: style.copyWith(
                     color: Colors.black,
                     fontSize: 3.370798 * SizeConfig.heightMultiplier,
@@ -71,28 +70,35 @@ class ForgotPassScreen extends StatelessWidget {
               SizedBox(
                 height: 4.213497 * SizeConfig.heightMultiplier,
               ),
-              field(
+              Passwordfield(
                   context,
-                  authController.forgotEmailKey,
-                  authController.forgotEmailController,
-                  "Enter Your Email",
-                  TextInputType.name),
+                  authController.changePasswordKey,
+                  authController.changePasswordController,
+                  "Enter your Password",
+                  authController.isVisibleChange,
+                  authController),
+              SizedBox(height: 3.6868 * SizeConfig.heightMultiplier),
+              Passwordfield(
+                  context,
+                  authController.changePasswordVerifyKey,
+                  authController.changePasswordControllerVerify,
+                  "Enter your New Password",
+                  authController.isVisibleChangeVerify,
+                  authController),
               SizedBox(height: 3.6868 * SizeConfig.heightMultiplier),
               //* Loading Logic For Button
               Obx(
-                () => authController.isLoadingForgotEmail.value
+                () => authController.isLoadingChangePassword.value
                     ? Center(
                         child: CircularProgressIndicator(
                         color: Colours.Green,
                       ))
-                    : authButton("Send Code", () async {
-                        if (authController.forgotEmailKey.currentState!
-                            .validate()) {
-                          await authController.sendPasswordResetEmail(context);
-                          Get.offAll(() => LoginScreen(),
-                              transition: Transition.rightToLeft);
-                        } else {}
-                        ;
+                    : authButton("Change Password", () async {
+                        if(authController.changePasswordController.text.toString() != authController.changePasswordControllerVerify.text.toString()){
+                            toastErrorSlide(context, "Both Passwords don't match !!");
+                        }else{
+
+                        }
                       }),
               ),
               SizedBox(
@@ -100,27 +106,29 @@ class ForgotPassScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => VerifyCodeScreen(),
+                  Get.offAll(() => LoginScreen(),
                       transition: Transition.rightToLeft);
                 },
-                child: RichText(
-                  text: TextSpan(
-                      text: "You will receive code",
-                      style: style.copyWith(
-                          color: Colors.grey.shade800,
-                          fontSize: 2.475430 * SizeConfig.heightMultiplier,
-                          fontFamily: "Glacial_Regular",
-                          fontWeight: FontWeight.bold),
-                      children: [
-                        TextSpan(
-                            text: " on your email.",
-                            style: style.copyWith(
-                                color: Colours.Green,
-                                fontSize:
-                                    2.475430 * SizeConfig.heightMultiplier,
-                                fontFamily: "Glacial_Regular",
-                                fontWeight: FontWeight.bold))
-                      ]),
+                child: FittedBox(
+                  child: RichText(
+                    text: TextSpan(
+                        text: "Don't forget your",
+                        style: style.copyWith(
+                            color: Colors.grey.shade800,
+                            fontSize: 2.475430 * SizeConfig.heightMultiplier,
+                            fontFamily: "Glacial_Regular",
+                            fontWeight: FontWeight.bold),
+                        children: [
+                          TextSpan(
+                              text: " new password !",
+                              style: style.copyWith(
+                                  color: Colours.Green,
+                                  fontSize:
+                                      2.475430 * SizeConfig.heightMultiplier,
+                                  fontFamily: "Glacial_Regular",
+                                  fontWeight: FontWeight.bold))
+                        ]),
+                  ),
                 ),
               )
             ],

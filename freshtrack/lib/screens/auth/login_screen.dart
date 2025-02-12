@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
+import 'package:freshtrack/screens/auth/forgot_pass_screen.dart';
 import 'package:freshtrack/screens/auth/signup_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
@@ -90,7 +91,7 @@ class LoginScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: (){
-                  print("noti");
+                  Get.to(()=>ForgotPassScreen(),transition: Transition.rightToLeft);
                  // LocalNotifications.closePeriodicNotification(1);
                 // LocalNotifications.periodicNotification(title: "This is a periodic notification.", body: "Hello world!", payload: "No Data");
                 },

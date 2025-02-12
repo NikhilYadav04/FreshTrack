@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:freshtrack/helper/keySecure.dart';
+import 'package:freshtrack/styling/toast.dart';
 import 'package:http/http.dart' as http;
 
 class Notificationservice {
@@ -67,9 +69,37 @@ class Notificationservice {
     }
   }
 
-  static void createanddisplaynotificationLocally(
-      String title, String body) async {
+  static void notificationExpiry(String item) async {
     try {
+      //! below firestore operations can only be performed with fcm cloud server
+      //* get items
+      // final email = FirebaseAuth.instance.currentUser!.email;
+      // CollectionReference collectionReference =
+      //     FirebaseFirestore.instance.collection("expiry");
+      // QuerySnapshot querySnapshot =
+      //     await collectionReference.where(email!, isEqualTo: "email").get();
+      // DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      // List<dynamic> items = documentSnapshot.get('items');
+
+      // //* filter out near expiry items
+      // String expiry_items = " ";
+      // for (int i = 0; i < items.length; i++) {
+      //   String date = items[i]["e_date"].toString();
+      //   final productDate = DateFormat('MMMM dd, yyyy').parse(date);
+      //   final currentDate = DateTime.now();
+      //   final difference = productDate.difference(currentDate);
+      //   if ((difference.inHours >= 0 && difference.inHours <= 72) ||
+      //       difference.inHours < 0) {
+      //     expiry_items += "${items[i]["p_name"]}, ";
+      //   }
+      // }
+
+      // var logger = Logger();
+      // logger.d("Item found Are ${expiry_items}");
+
+      // //* Send notification
+      final randomIndex = Random().nextInt(10);
+
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
@@ -82,8 +112,8 @@ class Notificationservice {
 
       await _notificationsPlugin.show(
         id,
-        title,
-        body,
+        expiryQuotes[randomIndex],
+        "${item} is about to be expiry",
         notificationDetails,
         payload: "",
         //* default payload :- message.data['_id']

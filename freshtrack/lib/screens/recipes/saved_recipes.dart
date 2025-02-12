@@ -49,13 +49,9 @@ class SavedRecipesScreen extends StatelessWidget {
                 .getSaved(FirebaseAuth.instance.currentUser!.email!),
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    color: Colours.Green,
-                  ),
-                );
+                return Center(child: Image.asset("assets/main/saved.png"));
               } else {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                   print(snapshot.data.docs.length);
                   final doc = snapshot.data!.docs.first;
                   final items = doc["recipes"];
@@ -180,12 +176,7 @@ class SavedRecipesScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Center(
-                    child: Text(
-                      "No Saved Recipes",
-                      style: style.copyWith(fontSize: 24, color: Colors.black),
-                    ),
-                  );
+                  return Center(child: Image.asset("assets/main/saved.png"));
                 }
               }
             },

@@ -57,13 +57,9 @@ class ItemsListScreen extends StatelessWidget {
                   itemListController.fetchList(itemListController.getemail()!),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Colours.Green,
-                    ),
-                  );
+                  return Center(child: Image.asset("assets/main/search.png"));
                 } else {
-                  if (snapshot.hasData) {
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                     final doc = snapshot.data!.docs.first;
                     final items = doc["items"];
                     itemListController.itemList.value = items;
@@ -138,9 +134,7 @@ class ItemsListScreen extends StatelessWidget {
                           }),
                     );
                   } else {
-                    return Center(
-                      child: Text("No Items Available"),
-                    );
+                    return Center(child: Image.asset("assets/main/search.png"));
                   }
                 }
               })

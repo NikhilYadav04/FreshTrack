@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/saved_recipe_controller.dart';
 import 'package:get/get.dart';
@@ -109,8 +110,12 @@ class GeminiRecipes extends StatelessWidget {
                                         6.32024 * SizeConfig.heightMultiplier,
                                     width:
                                         13.39285 * SizeConfig.widthMultiplier,
-                                    child: recipes[index]["image"].toString() == "" ? Image.asset("assets/main/burger.png") : Image.network(
-                                        recipes[index]["image"].toString())),
+                                    child: recipes[index]["image"].toString() ==
+                                            ""
+                                        ? Image.asset("assets/main/burger.png")
+                                        : CachedNetworkImage(
+                                            imageUrl: recipes[index]["image"]
+                                                .toString())),
                                 title: FittedBox(
                                   child: Text(
                                     maxLines: 2,
@@ -130,9 +135,9 @@ class GeminiRecipes extends StatelessWidget {
                                         savedRecipeController.addRecipe(
                                             context,
                                             recipes[index]["title"].toString(),
-                                            recipes[index]["making"]
-                                                .toString(),recipes[index]["image"]
-                                                .toString(),recipes[index]["ingredients"]
+                                            recipes[index]["making"].toString(),
+                                            recipes[index]["image"].toString(),
+                                            recipes[index]["ingredients"]
                                                 .toString());
                                       },
                                       options: GroupButtonOptions(

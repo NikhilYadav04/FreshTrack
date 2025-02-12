@@ -135,6 +135,20 @@ class SearchRecipeController extends GetxController {
         toastErrorSlide(context, "You can add only 10 Items in List");
         isLoadingUpload.value = false;
       } else {
+        print("Reached here");
+
+        DateTime now = DateTime.now();
+        DateTime targetDate =
+            DateFormat("MMMM d, y").parse(dateController.text.trim());
+
+        Duration difference = targetDate.difference(now);
+
+        if (difference.inHours == 0 || difference.inHours < 0) {
+          toastErrorSlide(context, "Select a date in Future");
+          isLoadingUpload.value = false;
+          return "";
+        }
+
         final url = await addImage(image, context);
 
         if (url.isEmpty) {
@@ -142,13 +156,6 @@ class SearchRecipeController extends GetxController {
           toastErrorSlide(context, "Image upload failed");
           return 'Image Upload Failed';
         }
-
-        print("Reached here");
-
-        DateTime now = DateTime.now();
-        DateTime targetDate =
-            DateFormat("MMMM d, y").parse(dateController.text.trim());
-        Duration difference = targetDate.difference(now);
 
         List<Map<String, dynamic>> items = [
           {
@@ -173,7 +180,7 @@ class SearchRecipeController extends GetxController {
 
         //* After adding items schedule workmanager task for showing notifications
         WorkManager.scheduleNotifyExpiry(
-            difference.inHours, nameController.text.trim());
+            difference.inHours * 60, nameController.text.trim());
 
         toastSuccessSlide(context, "Item Added Successfully");
         isLoadingUpload.value = false;

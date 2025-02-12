@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
-import 'package:freshtrack/screens/auth/login_screen.dart';
+import 'package:freshtrack/screens/auth/change_password_screen.dart';
 import 'package:freshtrack/screens/auth/signup_screen.dart';
-import 'package:freshtrack/screens/auth/verify_code_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
 import 'package:freshtrack/styling/sizeConfig.dart';
@@ -10,8 +9,8 @@ import 'package:freshtrack/widgets/auth_widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-class ForgotPassScreen extends StatelessWidget {
-  ForgotPassScreen({super.key});
+class VerifyCodeScreen extends StatelessWidget {
+  VerifyCodeScreen({super.key});
   final AuthController authController = Get.put(AuthController());
 
   @override
@@ -35,7 +34,7 @@ class ForgotPassScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          "Change Password",
+          "Verify Code",
           style: style.copyWith(
               fontWeight: FontWeight.w400,
               fontSize: 3.37079 * SizeConfig.heightMultiplier),
@@ -55,13 +54,13 @@ class ForgotPassScreen extends StatelessWidget {
                 width: 32.3660 * SizeConfig.widthMultiplier,
               )),
               Text(
-                "Forgot Password?",
+                "Verify Code!!",
                 style: style.copyWith(
                     color: Colours.Green,
                     fontSize: 4.00282 * SizeConfig.heightMultiplier),
               ),
               Text(
-                "Enter your email here",
+                "Enter the code here",
                 style: style.copyWith(
                     color: Colors.black,
                     fontSize: 3.370798 * SizeConfig.heightMultiplier,
@@ -73,24 +72,22 @@ class ForgotPassScreen extends StatelessWidget {
               ),
               field(
                   context,
-                  authController.forgotEmailKey,
-                  authController.forgotEmailController,
-                  "Enter Your Email",
+                  authController.forgotCodeKey,
+                  authController.forgotCodeController,
+                  "Enter Your Code",
                   TextInputType.name),
               SizedBox(height: 3.6868 * SizeConfig.heightMultiplier),
               //* Loading Logic For Button
               Obx(
-                () => authController.isLoadingForgotEmail.value
+                () => authController.isLoadingForgotCode.value
                     ? Center(
                         child: CircularProgressIndicator(
                         color: Colours.Green,
                       ))
                     : authButton("Send Code", () async {
-                        if (authController.forgotEmailKey.currentState!
+                        if (authController.forgotCodeKey.currentState!
                             .validate()) {
-                          await authController.sendPasswordResetEmail(context);
-                          Get.offAll(() => LoginScreen(),
-                              transition: Transition.rightToLeft);
+                          await authController.loginAccount(context);
                         } else {}
                         ;
                       }),
@@ -100,27 +97,29 @@ class ForgotPassScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => VerifyCodeScreen(),
+                  Get.to(() => ChangePasswordScreen(),
                       transition: Transition.rightToLeft);
                 },
-                child: RichText(
-                  text: TextSpan(
-                      text: "You will receive code",
-                      style: style.copyWith(
-                          color: Colors.grey.shade800,
-                          fontSize: 2.475430 * SizeConfig.heightMultiplier,
-                          fontFamily: "Glacial_Regular",
-                          fontWeight: FontWeight.bold),
-                      children: [
-                        TextSpan(
-                            text: " on your email.",
-                            style: style.copyWith(
-                                color: Colours.Green,
-                                fontSize:
-                                    2.475430 * SizeConfig.heightMultiplier,
-                                fontFamily: "Glacial_Regular",
-                                fontWeight: FontWeight.bold))
-                      ]),
+                child: FittedBox(
+                  child: RichText(
+                    text: TextSpan(
+                        text: "Check the code received",
+                        style: style.copyWith(
+                            color: Colors.grey.shade800,
+                            fontSize: 2.475430 * SizeConfig.heightMultiplier,
+                            fontFamily: "Glacial_Regular",
+                            fontWeight: FontWeight.bold),
+                        children: [
+                          TextSpan(
+                              text: " on your email.",
+                              style: style.copyWith(
+                                  color: Colours.Green,
+                                  fontSize:
+                                      2.475430 * SizeConfig.heightMultiplier,
+                                  fontFamily: "Glacial_Regular",
+                                  fontWeight: FontWeight.bold))
+                        ]),
+                  ),
                 ),
               )
             ],
