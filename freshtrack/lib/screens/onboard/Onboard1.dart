@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/styling/images.dart';
+import 'package:freshtrack/styling/sizeConfig.dart';
 import 'package:freshtrack/styling/strings.dart';
 
 class Onboard1 extends StatelessWidget {
@@ -13,22 +14,22 @@ class Onboard1 extends StatelessWidget {
         children: [
           Image.asset(
             Images.Onboard1,
-            height: 320,
-            width: 400,
+            height: 33.70798*SizeConfig.heightMultiplier,
+            width: 89.28571*SizeConfig.widthMultiplier,
           ),
-          SizedBox(height: 25,),
+          SizedBox(height: 2.63343*SizeConfig.heightMultiplier,),
           Text(
             Strings.onBoardTitle[0],style: TextStyle(
               color: Colors.white,
-              fontSize: 34,
+              fontSize: 3.5814*SizeConfig.heightMultiplier,
               fontFamily: "Glacial_Bold"
             ),
           ),
-          SizedBox(height: 15,),
+          SizedBox(height: 1.5800*SizeConfig.heightMultiplier,),
            Text(
             Strings.onBoardDescription[0],style: TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 2.73877*SizeConfig.heightMultiplier,
               fontWeight: FontWeight.w500,
               fontFamily: "Glacial_Regular"
             ),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sliding_toast/flutter_sliding_toast.dart';
 import 'package:freshtrack/helper/keySecure.dart';
 import 'package:freshtrack/helper/toastMessage.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
@@ -203,7 +204,7 @@ class AuthController extends GetxController {
     try {
       isLoadingForgotEmail.value = true;
       await FirebaseAuth.instance.sendPasswordResetEmail(email: forgotEmailController.text.toString());
-      toastSuccessSlide(context, 'Password reset link sent to ${forgotEmailController.text.toString()}');
+      toastSuccessSlideLong(context, 'Password reset link sent to ${forgotEmailController.text.toString()}');
       isLoadingForgotEmail.value = false;
     } catch (e) {
       toastErrorSlide(context, 'Error: ${e.toString()}');
@@ -273,4 +274,25 @@ class AuthController extends GetxController {
       return "Error : ${e.toString()}";
     }
   }
+}
+
+ToastController toastSuccessSlideLong(BuildContext context, String title) {
+  return InteractiveToast.slideSuccess(
+    context,
+    title: Text(
+      "${title}",
+      style: TextStyle(
+          fontSize: 20,
+          fontFamily: "Glacial_Bold",
+          color: Colors.green.shade800),
+    ),
+    toastSetting: SlidingToastSetting(
+      toastStartPosition: ToastPosition.bottom,
+      toastAlignment: Alignment(0, 0.9),
+      maxHeight: 180,
+      maxWidth: 400,
+      animationDuration: Duration(seconds: 1),
+      displayDuration: Duration(seconds: 6),
+    ),
+  );
 }

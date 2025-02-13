@@ -79,29 +79,21 @@ class _MainScreenState extends State<MainScreen> {
               size: 5.47754 * SizeConfig.heightMultiplier,
             ),
           ),
-          //  InkWell(
-          //     onTap: () => Get.to(() => NotificationScreen(),
-          //         transition: Transition.upToDown),
+          // InkWell(
+          //     onTap: () {
+          //       print("Taske xecuted clicekd");
+          //       // Notificationservice.createanddisplaynotificationLocally("Apple","Hi dance");
+          //       //Notificationservice.sendNotification();
+          //       //WorkManager.executeTask();
+          //       //WorkManager.cancelTask();
+          //       WorkManager.scheduleNotifyExpiry(0, "Mango");
+          //       //toastErrorSlide(context, "You have clicked toast to test");
+          //     },
           //     child: Image.asset(
           //       Images.Bell,
           //       height: 4.42417 * SizeConfig.heightMultiplier,
           //       width: 9.375 * SizeConfig.widthMultiplier,
           //     )),
-          InkWell(
-              onTap: () {
-                print("Taske xecuted clicekd");
-               // Notificationservice.createanddisplaynotificationLocally("Apple","Hi dance");
-                 //Notificationservice.sendNotification();
-                //WorkManager.executeTask();
-                WorkManager.cancelTask();
-                //WorkManager.scheduleNotifyExpiry(1, "Mango");
-                //toastErrorSlide(context, "You have clicked toast to test");
-              },
-              child: Image.asset(
-                Images.Bell,
-                height: 4.42417 * SizeConfig.heightMultiplier,
-                width: 9.375 * SizeConfig.widthMultiplier,
-              )),
           IconButton(
             onPressed: () {
               authController.logout(context);
@@ -132,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
         () => AnimatedContainer(
           duration: Duration(milliseconds: 500),
           child: CurvedNavigationBar(
-              height:  7.16294 * SizeConfig.heightMultiplier ,
+              height: 7.16294 * SizeConfig.heightMultiplier,
               buttonBackgroundColor: Colours.Green,
               backgroundColor: Colors.white,
               color: Colours.Green,

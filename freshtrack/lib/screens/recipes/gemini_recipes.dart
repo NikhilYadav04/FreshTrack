@@ -94,7 +94,10 @@ class GeminiRecipes extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
+                                        horizontal:
+                                            2.2321 * SizeConfig.widthMultiplier,
+                                        vertical: 1.0533 *
+                                            SizeConfig.heightMultiplier),
                                     child: Text(
                                       recipes[index]["making"].toString(),
                                       style: Style.copyWith(
@@ -128,7 +131,7 @@ class GeminiRecipes extends StatelessWidget {
                                   ),
                                 ),
                                 subtitle: Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  padding: EdgeInsets.symmetric(vertical: 0.5266*SizeConfig.heightMultiplier),
                                   child: Obx(
                                     () => GroupButton(
                                       onSelected: (value, Index, isSelected) {
@@ -141,10 +144,10 @@ class GeminiRecipes extends StatelessWidget {
                                                 .toString());
                                       },
                                       options: GroupButtonOptions(
-                                          buttonHeight: 35,
-                                          buttonWidth: 75,
+                                          buttonHeight: 3.68681*SizeConfig.heightMultiplier,
+                                          buttonWidth: 16.74107*SizeConfig.widthMultiplier,
                                           borderRadius:
-                                              BorderRadius.circular(20),
+                                              BorderRadius.circular(2.1067*SizeConfig.heightMultiplier),
                                           //* if recipe is saved is checked in local storage
                                           selectedColor: savedRecipeController
                                                   .saveList
@@ -162,11 +165,11 @@ class GeminiRecipes extends StatelessWidget {
                                               MainGroupAlignment.start,
                                           selectedTextStyle: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 18,
+                                              fontSize: 1.8960*SizeConfig.heightMultiplier,
                                               fontFamily: "Poppins"),
                                           unselectedTextStyle: TextStyle(
                                               color: Colors.white,
-                                              fontSize: 18,
+                                              fontSize: 1.8960*SizeConfig.heightMultiplier,
                                               fontFamily: "Poppins")),
                                       buttons: [
                                         savedRecipeController.saveList.any(

@@ -103,11 +103,19 @@ class Notificationservice {
       final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       const NotificationDetails notificationDetails = NotificationDetails(
         android: AndroidNotificationDetails(
-            "freshtrack", "pushnotificationappchannel",
-            importance: Importance.max,
-            priority: Priority.high,
-            // largeIcon: FilePathAndroidBitmap('assets/bell.png')
-            largeIcon: DrawableResourceAndroidBitmap("@mipmap/ic_launcher")),
+          "freshtrack",
+          "pushnotificationappchannel",
+          importance: Importance.max,
+          priority: Priority.high,
+          styleInformation: BigTextStyleInformation(
+            '', // Add your large text here
+            contentTitle: '<b>Your Bold Title</b>', // Use HTML tags for bold
+            htmlFormatContentTitle:
+                true, // Enable HTML formatting for the title
+            htmlFormatBigText: true, // Enable HTML formatting for the big text
+          ),
+          largeIcon: DrawableResourceAndroidBitmap("@mipmap/ic_launcher"),
+        ),
       );
 
       await _notificationsPlugin.show(

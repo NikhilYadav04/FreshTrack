@@ -161,7 +161,7 @@ class SearchRecipesScreen extends StatelessWidget {
                       }
                     })),
           ),
-          SizedBox(height: 35,)
+          SizedBox(height: 3.686810*SizeConfig.heightMultiplier,)
         ],
       ),
     );

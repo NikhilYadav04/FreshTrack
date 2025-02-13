@@ -126,7 +126,7 @@ class SavedRecipesScreen extends StatelessWidget {
                                                 FittedBox(
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
-                                                        right: 8),
+                                                        right: 0.84269*SizeConfig.heightMultiplier),
                                                     child: Text(
                                                       itemList[index]["title"],
                                                       style: style.copyWith(

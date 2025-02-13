@@ -119,7 +119,7 @@ class ItemsListScreen extends StatelessWidget {
                                           child: Icon(
                                             Icons.delete,
                                             color: Colors.grey.shade800,
-                                            size: 28,
+                                            size: 2.949448*SizeConfig.heightMultiplier,
                                           ),
                                         ),
                                       ),

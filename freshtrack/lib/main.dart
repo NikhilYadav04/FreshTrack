@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Container(
                 color: Colours.Green,
-                child: Image.asset("assets/icon.png"),
+                child: Image.asset("assets/icon.png",scale: 2.1,),
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
               final status = snapshot.data.toString();

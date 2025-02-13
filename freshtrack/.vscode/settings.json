@@ -4,5 +4,6 @@
         "freshbox",
         "imagefile"
     ],
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cmake.sourceDirectory": "N:/Dev/Flutter/FreshTrack/freshtrack/linux"
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freshtrack/GetX_Controllers/auth_controller.dart';
 import 'package:freshtrack/screens/auth/login_screen.dart';
-import 'package:freshtrack/screens/auth/signup_screen.dart';
 import 'package:freshtrack/screens/auth/verify_code_screen.dart';
 import 'package:freshtrack/styling/colors.dart';
 import 'package:freshtrack/styling/images.dart';
@@ -99,13 +98,10 @@ class ForgotPassScreen extends StatelessWidget {
                 height: 3.16012 * SizeConfig.heightMultiplier,
               ),
               GestureDetector(
-                onTap: () {
-                  Get.to(() => VerifyCodeScreen(),
-                      transition: Transition.rightToLeft);
-                },
+                onTap: () {},
                 child: RichText(
                   text: TextSpan(
-                      text: "You will receive code",
+                      text: "You will receive reset link",
                       style: style.copyWith(
                           color: Colors.grey.shade800,
                           fontSize: 2.475430 * SizeConfig.heightMultiplier,

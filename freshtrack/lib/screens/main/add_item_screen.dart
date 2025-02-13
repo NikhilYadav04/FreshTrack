@@ -46,7 +46,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
             icon: Icon(
               Icons.arrow_back_ios,
               color: Colors.white,
-              size: 36,
+              size: 3.79214*SizeConfig.heightMultiplier,
             )),
         centerTitle: true,
         backgroundColor: Colours.Green,
