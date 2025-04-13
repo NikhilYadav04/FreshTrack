@@ -79,7 +79,9 @@ lib/
 
 ### 🔥 Firebase and Backend
 - `firebase_core`
-- `cloud_firestore`
+- `cloud_firestore1`
+- `firebase_database`
+- `firebase_ui_firestore`
 
 ### 🧠 State Management
 - `getx`
