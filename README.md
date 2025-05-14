@@ -4,6 +4,12 @@
 
 ---
 
+## 🚀 Check App Preview
+
+Click below to check the preview of the full UI and features:
+
+🔗 [View the Preview](https://drive.google.com/drive/folders/1wupuRnndFRL4xPdaDgPx_VUyCFOqoBXf)
+
 ## 🧩 I - Introduction
 
 FreshTrack is designed to assist users in tracking food items by recording their expiry dates and notifying them in advance. The app offers a visually clean and functionally efficient way to prevent food spoilage. It also includes a powerful feature that leverages AI to suggest recipes based on ingredients nearing expiry, helping users make the most out of their groceries.
